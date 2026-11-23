@@ -1,0 +1,78 @@
+BLOCK ARENA — EDIÇÃO NAVEGADOR
+Versão local de 23/11/2026, baseada no index.html fornecido.
+
+COMO JOGAR
+Abra downloads/block-arena.html no Chrome ou Edge. Esse arquivo reúne o jogo inteiro:
+não precisa instalar nada nem carregar bibliotecas de um CDN.
+Alternativamente, baixe o repositório inteiro e abra seu index.html.
+Para desenvolvimento, sirva a pasta por HTTP (ex.: python -m http.server 8000).
+
+Esta edição usa teclado e mouse. O lobby se adapta a telas pequenas, mas
+controles de toque e suporte completo a celular ainda não foram implementados.
+
+CONTROLES PRINCIPAIS
+WASD: mover; Shift: correr; Espaço: pular; C/Ctrl: agachar.
+Mouse esquerdo: atirar; direito: mirar; roda/1–0/Y: trocar arma; R: recarregar.
+G/V: gel; E/I: kit/inalador; T: segurar e soltar granada; M: mina; X: fumaça.
+Z: habilidade; K: VANT; Enter: veículo/tirolesa; Alt: olhar livre.
+Esc/P/H: menu. Abra “Ver todos os controles” para consultar a lista completa.
+Sensibilidade, assistência de mira, bots e locutor ficam no menu de pausa.
+
+O QUE MUDOU
+- Pausa/continuar preservam a partida local, inclusive recargas e granadas.
+- Trocar de aba pausa a partida local. Ela só retoma quando você continuar.
+- Reinício e saída limpam granadas, paredes, fumaça, efeitos e ações pendentes.
+- Save inválido é recuperado; armazenamento bloqueado apresenta um aviso.
+- Avatares de blocos com rosto, cabelo, boné e personalização persistida.
+- Prévia 3D permite girar o personagem com o mouse.
+- Lobby reorganizado, guia de controles, foco por teclado e botão de tela cheia.
+- Qualidade Leve/Equilibrado/Detalhado altera resolução, sombras e partículas.
+- Geometrias compartilhadas, partículas reutilizadas, limpeza de recursos
+  gráficos, cache de obstáculos e atualização menos frequente dos textos do HUD.
+- O cenário não é renderizado continuamente no lobby ou na pausa local.
+- BR e progressão estão identificados como bots/progresso local.
+
+ESCOLHENDO A QUALIDADE
+Leve: sem sombras dinâmicas, resolução até 1x e limite de 48 partículas.
+Equilibrado: sombras 1024, resolução até 1,25x e 96 partículas.
+Detalhado: sombras 2048, resolução até 1,75x e 180 partículas.
+A resolução também respeita a densidade real da tela. O contador de FPS aparece
+durante a partida; resultados dependem de hardware, resolução e navegador.
+
+X1 ONLINE
+Crie uma sala, envie o código de quatro números ao seu amigo e aguarde a conexão
+antes de iniciar. Os dois jogadores precisam clicar em Jogar agora.
+O X1 usa o PeerJS existente e depende de internet e de conectividade WebRTC.
+O texto antigo “sem servidor” foi removido: existe um serviço de sinalização.
+O menu não pausa o adversário; a partida online continua. Sair fecha a conexão.
+Foram adicionadas validação de mensagens e proteção contra resultados duplicados.
+Isso NÃO transforma o P2P em uma modalidade competitiva confiável.
+Conexão real entre duas redes diferentes não foi validada nesta entrega.
+
+CONTAS E RANQUEADAS
+Ainda não há login, banco de dados ou ranqueada competitiva. O progresso é local
+e editável pelo dono do navegador. Esses sistemas pertencem à próxima etapa.
+O formato do save anterior foi preservado, mas navegadores podem separar os
+dados por origem/caminho; não existe migração automática do arquivo original.
+
+ARQUIVOS PARA DESENVOLVER
+index.html: estrutura das telas e carregamento dos scripts.
+styles.css: estilos básicos do jogo original.
+theme.css: lobby, pausa, personalização, HUD e adaptação de layout.
+runtime.js: armazenamento, relógio, agendamento e liberação de recursos.
+avatars.js: fábrica de personagens e geometrias compartilhadas.
+browser-ui.js: prévia 3D, diálogos e controles do navegador.
+game.js: regras e simulação adaptadas do protótipo original.
+vendor/: Three.js r128 e PeerJS 1.5.5, com suas licenças MIT.
+build-standalone.py: gera novamente o HTML único a partir desses arquivos.
+
+Para gerar o HTML único: python build-standalone.py
+O arquivo é escrito na pasta downloads/ do repositório.
+
+O index.html original em Downloads foi preservado.
+
+TESTES PARA DESENVOLVEDORES
+Instale Node.js e tenha o Chrome instalado. Nesta pasta, execute npm install,
+depois npm run check e npm test. Os testes usam apenas um servidor local
+temporário e uma cópia instrumentada do script, sem API de teste no jogo final.
+Os resultados e capturas são gravados em test-results/.

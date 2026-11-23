@@ -1,0 +1,36 @@
+VALIDAÇÃO — BLOCK ARENA — 23/11/2026
+
+Navegador: Chrome headless com WebGL por SwiftShader (renderização por software).
+O teste não mede FPS de uma placa gráfica real.
+
+PASSOU: Inicialização com JSON corrompido
+PASSOU: Valores inválidos no save recuperados
+PASSOU: Armazenamento bloqueado não impede jogar
+PASSOU: Personalização real e persistência do avatar
+PASSOU: Movimentação no teclado
+PASSOU: Pausa congela posição, recarga, granada e ações agendadas
+PASSOU: Continuar retoma a mesma partida
+PASSOU: Ações agendadas retomam após continuar
+PASSOU: Reinício elimina projéteis e callbacks da partida anterior
+PASSOU: Ocultar a aba pausa a partida local
+PASSOU: Presets gráficos alteram renderização e sombras
+PASSOU: BR, duelo com bot, sobrevivência e loja Contra Squad iniciam
+PASSOU: As onze armas trocam e disparam sem exceções
+PASSOU: Vitória abre resultado e revanche inicia nova partida
+PASSOU: X1 exige conexão antes de iniciar
+PASSOU: Mensagens P2P inválidas e dano fora do limite rejeitados
+PASSOU: Protocolo X1 aplica dano válido e ignora resultado duplicado
+PASSOU: Área de acerto da cabeça acompanha o avatar de blocos
+PASSOU: Memória gráfica estável em 20 ciclos de efeitos e limpeza
+PASSOU: Lobby sem rolagem horizontal em 390, 768 e 1366 pixels
+PASSOU: Sem exceções JavaScript durante os testes
+
+20 ciclos de criação/renderização/limpeza de paredes, fumaça, loot, granadas e partículas:
+Geometrias: 168 antes; 168 depois.
+Texturas: 7 antes; 7 depois.
+
+As duas edições abriram por file:// com o navegador offline, sem requisições HTTP e sem exceções JavaScript. Foram verificados lobby, início, pausa, continuar, controles e retorno ao lobby.
+
+X1: protocolo exercitado com conexão simulada; conexão real entre duas redes não testada.
+
+O hash SHA-256 do HTML original permanece igual ao registrado antes da implementação.

@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#142036" />
+    <meta
+      name="description"
+      content="Block Arena: jogo 3D de blocos no navegador, com treino, bots e duelo casual com amigos."
+    />
+    <title>Block Arena · Jogue no navegador</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="theme.css" />
+  </head>
+  <body class="in-lobby">
+    <canvas id="fxLayer"></canvas>
+    <div id="hud">
+      <div class="row-top">
+        <div class="top-left">
+          <div style="width: 126px; height: 126px"></div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <div class="panel stats">
+              <div class="stat">
+                <label>Nível local</label
+                ><span id="uiRank" class="gold" style="font-size: 15px"
+                  >Bronze</span
+                >
+              </div>
+              <div class="stat">
+                <label>Abates</label><span id="uiKills">0</span>
+              </div>
+              <div class="stat">
+                <label>Capas</label><span id="uiCapas" class="red">0</span>
+              </div>
+              <div class="stat">
+                <label>Taxa Capa</label><span id="uiRate" class="gold">0%</span>
+              </div>
+              <div class="stat">
+                <label>Mouse</label
+                ><span id="uiLock" style="font-size: 12px" class="gold"
+                  >Livre</span
+                >
+              </div>
+            </div>
+            <div id="scoreBox">
+              <span class="cyan" id="scLeftLabel">VOCÊ <b>0</b></span
+              ><span style="font-size: 13px; color: #94a3b8" id="scMidLabel"
+                >ROUND <b>1</b></span
+              ><span class="red" id="scRightLabel"><b>0</b> INIMIGOS</span
+              ><span style="font-size: 13px; color: #ffbe2e" id="scZoneTxt"
+                >Safe OK</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="top-right">
+          <button class="config-toggle interactive" id="btnToggleCfg">
+            [ESC] Menu e ajustes
+          </button>
+          <div class="panel settings interactive" id="settingsPanel">
+            <div class="set-row">
+              <span>Modo de Mira:</span
+              ><select id="aimMode">
+                <option value="padrao">Mira assistida</option>
+                <option value="precisa">Mira Precisa (Ao Mirar)</option>
+                <option value="total">Controle Total (Sem Assist.)</option>
+              </select>
+            </div>
+            <div id="slidersBox"></div>
+            <div class="set-row">
+              <span>Locutor / Bots:</span>
+              <div style="display: flex; gap: 4px">
+                <select id="botCombat">
+                  <option value="on">Bots Atiram</option>
+                  <option value="off">Passivos</option></select
+                ><select id="voiceToggle">
+                  <option value="on">Voz ON</option>
+                  <option value="off">Voz OFF</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div id="killfeed"></div>
+        </div>
+      </div>
+      <div id="banner">
+        <div id="bannerMain">CAPA!</div>
+        <div id="bannerSub"></div>
+      </div>
+      <div id="vehiclePrompt">Pressione [ENTER] para interagir</div>
+      <div class="row-bottom">
+        <div class="panel player-status">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              font-size: 13px;
+              font-weight: 700;
+            "
+          >
+            <span id="uiHpText">HP 200 / 200</span
+            ><span id="uiEpText" class="gold">EP 0</span
+            ><span id="uiCoins" class="gold" style="display: none">$ 800</span
+            ><span id="uiState">EM PÉ</span>
+          </div>
+          <div class="hp-bar-bg">
+            <div class="hp-bar-fill" id="uiHpBar"></div>
+          </div>
+          <div class="ep-bar-bg">
+            <div class="ep-bar-fill" id="uiEpBar"></div>
+          </div>
+          <div class="armor-row">
+            <div class="armor-pill">
+              <span>Capacete <b id="uiHelmLv">Nv.1</b></span
+              ><span id="uiHelmHp" class="cyan">100%</span>
+            </div>
+            <div class="armor-pill">
+              <span>Colete <b id="uiVestLv">Nv.1</b></span
+              ><span id="uiVestHp" class="cyan">100%</span>
+            </div>
+          </div>
+          <div class="abilities">
+            <span class="badge skill" id="uiSkill">[Z] Alok: Pronto</span
+            ><span class="badge uav" id="uiUav">[K] VANT: Pronto</span>
+            <span class="badge gel" id="uiGel">Gel [G/V]: 5</span
+            ><span class="badge kit" id="uiKit">Kit [E]: 3</span>
+            <span class="badge inal" id="uiInal">Inal. [I]: 3</span
+            ><span class="badge nade" id="uiNade">Gran. [T]: 2</span>
+            <span class="badge mine" id="uiMine">Mina [M]: 2</span
+            ><span class="badge smoke" id="uiSmoke">Fum. [X]: 2</span>
+          </div>
+        </div>
+        <div class="weapons-hud">
+          <div class="ammo-text" id="uiAmmo">MP40 • 28 / ∞</div>
+          <div class="weapon-slots interactive" id="weaponSlots"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="overlay" class="modal-backdrop lobby-backdrop">
+      <main class="modal lobby-shell" aria-labelledby="lobbyTitle">
+        <header class="lobby-header">
+          <a class="brand" href="#" aria-label="Block Arena, início"
+            ><span class="brand-mark">B<span>↗</span></span
+            ><span>BLOCK<br />ARENA<span class="brand-dot">.</span></span></a
+          >
+          <div class="lobby-header-right">
+            <span class="local-chip"><i></i> EDIÇÃO NAVEGADOR</span
+            ><button
+              id="btnFullscreenLobby"
+              class="icon-button"
+              aria-label="Ativar tela cheia"
+              title="Tela cheia"
+            >
+              ⛶
+            </button>
+          </div>
+        </header>
+        <div class="lobby-layout">
+          <section class="avatar-column" aria-label="Seu personagem">
+            <div class="avatar-stage">
+              <span class="edition-tag">SEU ESTILO. SUA ARENA.</span>
+              <div class="stage-orbit orbit-one"></div>
+              <div class="stage-orbit orbit-two"></div>
+              <span class="stage-word" aria-hidden="true">PLAY</span>
+              <canvas
+                id="avatarPreview"
+                aria-label="Prévia 3D do personagem. Arraste para girar."
+              ></canvas>
+              <div class="avatar-caption">
+                <span class="avatar-name"
+                  >PRONTO PRA AÇÃO<span class="avatar-spark">✦</span></span
+                ><small>Arraste o personagem para girar</small>
+              </div>
+            </div>
+            <div class="profile-strip">
+              <span class="profile-icon">★</span>
+              <div>
+                <span class="eyebrow">PROGRESSO NESTE NAVEGADOR</span
+                ><b id="svRank">Bronze</b>
+              </div>
+              <button
+                class="text-button"
+                id="btnResetStats"
+                title="Zerar estatísticas locais"
+              >
+                Zerar
+              </button>
+            </div>
+            <div class="local-stats">
+              <div><b id="svKills">0</b><span>ABATES</span></div>
+              <div><b id="svCapas">0</b><span>NA CABEÇA</span></div>
+              <div><b id="svBooyahs">0</b><span>VITÓRIAS</span></div>
+            </div>
+            <p class="local-note">
+              Jogue como visitante. O progresso fica salvo neste navegador.
+            </p>
+          </section>
+          <section class="play-column">
+            <div class="welcome">
+              <span class="eyebrow">ESCOLHA. ENTRE. JOGUE.</span>
+              <h1 id="lobbyTitle">Bora pra<br /><span>próxima?</span></h1>
+              <p>Uma arena de blocos. Vários jeitos de jogar.</p>
+            </div>
+            <div class="section-heading">
+              <h2>Escolha seu modo</h2>
+              <span>01 — 06</span>
+            </div>
+            <div
+              class="mode-btns"
+              id="modeBtns"
+              role="group"
+              aria-label="Modo de jogo"
+            ></div>
+            <div class="p2p-box" id="p2pBox">
+              <p id="p2pStatus" role="status">
+                Convide um amigo para um X1 casual. Requer internet.
+              </p>
+              <div class="p2p-row">
+                <button class="btn-sm" id="btnCreateRoom">Criar sala</button
+                ><input
+                  type="text"
+                  id="inpRoomCode"
+                  aria-label="Código da sala"
+                  placeholder="Código da sala"
+                  maxlength="8"
+                  inputmode="numeric"
+                /><button class="btn-sm" id="btnJoinRoom">Entrar</button>
+              </div>
+            </div>
+            <details class="customization" open>
+              <summary>Seu personagem <span>PERSONALIZAR +</span></summary>
+              <div class="custom-grid">
+                <label
+                  >Roupa<select id="skinColorSel">
+                    <option value="0x2563eb">Azul elétrico</option>
+                    <option value="0xdc2626">Vermelho</option>
+                    <option value="0xd97706">Laranja</option>
+                    <option value="0x7c3aed">Violeta</option>
+                    <option value="0x15803d">Verde</option>
+                  </select></label
+                >
+                <label
+                  >Tom de pele<select id="skinToneSel">
+                    <option value="0xf3c59d">Pêssego</option>
+                    <option value="0xd99c70">Caramelo</option>
+                    <option value="0x8d5a3a">Cacau</option>
+                    <option value="0xffda64">Dourado</option>
+                  </select></label
+                >
+                <label
+                  >Acessório<select id="hatStyleSel">
+                    <option value="cap">Boné</option>
+                    <option value="none">Só cabelo</option>
+                  </select></label
+                >
+                <label
+                  >Cor do boné<select id="hatColorSel">
+                    <option value="0xffcf4a">Amarelo</option>
+                    <option value="0xf3f0e7">Branco</option>
+                    <option value="0x142036">Preto</option>
+                  </select></label
+                >
+              </div>
+            </details>
+            <details class="customization advanced">
+              <summary>
+                Ajustes da partida <span>HABILIDADES E GRÁFICOS +</span>
+              </summary>
+              <div class="custom-grid">
+                <label
+                  >Companheiro<select id="petSel">
+                    <option value="panda">Panda · cura por abate</option>
+                    <option value="waggor">Waggor · gera gel</option>
+                    <option value="falcao">Falcão · paraquedas rápido</option>
+                    <option value="none">Sem companheiro</option>
+                  </select></label
+                >
+                <label
+                  >Cenário<select id="timeSel">
+                    <option value="dia">Dia</option>
+                    <option value="tarde">Pôr do sol</option>
+                    <option value="noite">Noite</option>
+                    <option value="chuva">Tempestade</option>
+                  </select></label
+                >
+                <label
+                  >Habilidade · Z<select id="skillSel">
+                    <option value="alok">Cura e velocidade</option>
+                    <option value="chrono">Escudo</option>
+                    <option value="tatsuya">Dash</option>
+                  </select></label
+                >
+                <label
+                  >Visual da arma<select id="evoSkinSel">
+                    <option value="padrao">Tática</option>
+                    <option value="dragao">Chama</option>
+                    <option value="cobra">Veneno</option>
+                    <option value="trovao">Elétrica</option>
+                  </select></label
+                >
+                <label
+                  >Recursos<select id="customRoomSel">
+                    <option value="off">Padrão</option>
+                    <option value="on">Gel e munição infinitos</option>
+                  </select></label
+                >
+                <label
+                  >Qualidade gráfica<select id="qualitySel">
+                    <option value="low">Leve</option>
+                    <option value="medium">Equilibrado</option>
+                    <option value="high">Detalhado</option>
+                  </select></label
+                >
+              </div>
+            </details>
+            <button class="play-btn" id="playBtn">
+              <span>JOGAR AGORA</span><span aria-hidden="true">↗</span>
+            </button>
+            <p class="play-hint" id="playHint">
+              Treino livre · teclado e mouse · sem instalação
+            </p>
+          </section>
+        </div>
+        <footer class="lobby-footer">
+          <span
+            ><kbd>W A S D</kbd> Mover <kbd>MOUSE</kbd> Mirar / atirar
+            <kbd>ESC</kbd> Menu</span
+          ><button id="btnControlsLobby" class="text-button">
+            Ver todos os controles ↗
+          </button>
+        </footer>
+        <details class="missions-details">
+          <summary>Desafios locais</summary>
+          <div class="missions-bar" id="missionsBar"></div>
+        </details>
+      </main>
+    </div>
+    <div
+      id="pauseModal"
+      class="modal-backdrop hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="pauseTitle"
+    >
+      <section class="modal pause-shell">
+        <span class="eyebrow">BLOCK ARENA</span>
+        <h1 id="pauseTitle">Respira. Depois, joga.</h1>
+        <p id="pauseNote">
+          Partida pausada. Seu progresso nesta partida está preservado.
+        </p>
+        <button class="play-btn" id="btnResume">
+          CONTINUAR <span>↗</span>
+        </button>
+        <div class="pause-actions">
+          <button id="btnRestart" class="secondary-btn">
+            Reiniciar partida</button
+          ><button id="btnExitLobby" class="secondary-btn">
+            Voltar ao lobby</button
+          ><button id="btnFullscreenPause" class="secondary-btn">
+            Tela cheia ⛶
+          </button>
+        </div>
+        <label class="pause-quality"
+          >Qualidade gráfica<select id="qualityPause">
+            <option value="low">Leve</option>
+            <option value="medium">Equilibrado</option>
+            <option value="high">Detalhado</option>
+          </select></label
+        >
+        <div id="pauseSettingsHost"></div>
+        <button id="btnControlsPause" class="text-button">Ver controles</button>
+      </section>
+    </div>
+    <div
+      id="controlsModal"
+      class="modal-backdrop hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="controlsTitle"
+    >
+      <section class="modal controls-shell">
+        <span class="eyebrow">SEU GUIA DA ARENA</span>
+        <h1 id="controlsTitle">Pegue o jeito.</h1>
+        <div class="control-list">
+          <div><kbd>W A S D</kbd><span>Mover</span></div>
+          <div><kbd>SHIFT</kbd><span>Correr</span></div>
+          <div><kbd>ESPAÇO</kbd><span>Pular</span></div>
+          <div><kbd>C / CTRL</kbd><span>Agachar</span></div>
+          <div><kbd>CLIQUE ESQ.</kbd><span>Atirar</span></div>
+          <div><kbd>CLIQUE DIR.</kbd><span>Mirar</span></div>
+          <div><kbd>RODA / 1–0 / Y</kbd><span>Trocar arma</span></div>
+          <div><kbd>R</kbd><span>Recarregar</span></div>
+          <div><kbd>G / V</kbd><span>Parede de gel</span></div>
+          <div><kbd>E / I</kbd><span>Kit / inalador</span></div>
+          <div><kbd>T / M / X</kbd><span>Granada / mina / fumaça</span></div>
+          <div><kbd>Z / K</kbd><span>Habilidade / VANT</span></div>
+          <div><kbd>ENTER</kbd><span>Veículo / tirolesa</span></div>
+          <div>
+            <kbd>ALT / U / B</kbd><span>Olhar livre / ombro / emote</span>
+          </div>
+          <div>
+            <kbd>Q / F / CLIQUE MEIO</kbd
+            ><span>Arma anterior / atirar / marcar</span>
+          </div>
+          <div><kbd>ESC / P / H</kbd><span>Menu e configurações</span></div>
+        </div>
+        <button id="btnCloseControls" class="play-btn">
+          ENTENDI <span>✓</span>
+        </button>
+      </section>
+    </div>
+    <div
+      id="appNotice"
+      role="status"
+      aria-live="polite"
+      class="app-notice hidden"
+    ></div>
+    <div id="bootError" class="boot-error hidden" role="alert">
+      <h1>Não foi possível abrir a arena.</h1>
+      <p id="bootErrorText"></p>
+      <button onclick="location.reload()">Tentar novamente</button>
+    </div>
+
+    <div id="shopModal" class="modal-backdrop hidden">
+      <div class="modal" style="width: 640px">
+        <h1>LOJA CONTRA SQUAD — ROUND <span id="shopRoundNum">1</span></h1>
+        <div class="subtitle">
+          Seu dinheiro: <b id="shopMoney" class="gold">$ 800</b> • Próximo round
+          em <b id="shopTimer" class="cyan">15s</b>
+        </div>
+        <div class="shop-grid" id="shopGrid"></div>
+        <button class="play-btn" id="btnReadyCS">Pronto / Iniciar Round</button>
+      </div>
+    </div>
+    <div id="summaryModal" class="modal-backdrop hidden">
+      <div class="modal" style="width: 500px">
+        <h1 id="sumTitle">VITÓRIA! 🏆</h1>
+        <div class="subtitle" id="sumSub">1º Lugar!</div>
+        <div class="summary-stats">
+          <div class="sum-card">
+            <label>Abates</label><b id="sumKills" class="gold">0</b>
+          </div>
+          <div class="sum-card">
+            <label>Capas</label><b id="sumCapas" class="red">0</b>
+          </div>
+          <div class="sum-card">
+            <label>Taxa Capa</label><b id="sumRate" class="cyan">0%</b>
+          </div>
+          <div class="sum-card">
+            <label>Dano Total</label><b id="sumDmg" class="green">0</b>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px">
+          <button class="play-btn" id="btnRematch">Jogar Novamente</button
+          ><button
+            class="play-btn"
+            id="btnBackLobby"
+            style="background: #334155; color: #fff"
+          >
+            Lobby
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="vendor/three.min.js"></script>
+    <script src="vendor/peerjs.min.js"></script>
+    <script src="runtime.js"></script>
+    <script src="avatars.js"></script>
+    <script src="browser-ui.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>

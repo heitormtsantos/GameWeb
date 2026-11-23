@@ -1,0 +1,13 @@
+{
+  "name": "block-arena-browser",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node tests/regression.cjs",
+    "check": "node tests/syntax.cjs",
+    "build": "python build-standalone.py"
+  },
+  "devDependencies": {
+    "playwright": "1.65.1"
+  }
+}
