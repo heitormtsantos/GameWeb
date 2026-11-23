@@ -39,7 +39,7 @@ let base;
 const source = fs
   .readFileSync(path.join(root, "game.js"), "utf8")
   .replaceAll("\r\n", "\n");
-const hook = `window.__arenaTest={state,player,clock,renderer,scene,camera,sun,ui,playerChar,enemies,dummies,grenades,glooWalls,smokeClouds,landmines,particles3d,particlePool,tracers3d,shockwaves,loots,mushrooms,obstacles,nadeGeo,nadeMat,statsTotal,WEAPONS,validPacket,setupConn,startMatch,startX1Round,startCSRound,pauseGame,resumeGame,leaveGame,clearArenaEntities,spawnGlooWallAt,spawnSmokeCloud,throwGrenade,plantLandmine,spawnSparks,spawnLootBox,spawnMushrooms,startReload,selectWeapon,applyPlayerDamage,damageEnemy,fireWeapon,applyQuality};`;
+const hook = `window.__arenaTest={state,player,clock,keys,bindings,magazines,simulate,renderer,scene,camera,sun,ui,playerChar,enemies,dummies,grenades,glooWalls,smokeClouds,landmines,particles3d,particlePool,tracers3d,shockwaves,loots,mushrooms,obstacles,nadeGeo,nadeMat,statsTotal,WEAPONS,validPacket,setupConn,startMatch,startX1Round,startCSRound,pauseGame,resumeGame,leaveGame,clearArenaEntities,spawnGlooWallAt,spawnSmokeCloud,throwGrenade,plantLandmine,spawnSparks,spawnLootBox,spawnMushrooms,startReload,selectWeapon,applyPlayerDamage,damageEnemy,fireWeapon,applyQuality};`;
 const instrumented = source.replace(
   "  requestAnimationFrame(animate);\n})();",
   hook + "\n  requestAnimationFrame(animate);\n})();",
@@ -126,18 +126,121 @@ function passed(name, data) {
     await page.waitForFunction(() => !!window.__arenaTest);
     assert.equal(await page.inputValue("#hatStyleSel"), "none");
     passed("Personalização real e persistência do avatar");
+    await page.click("#btnControlsLobby");
+    await page
+      .locator("#keybindingsList summary")
+      .filter({ hasText: "Combate" })
+      .click();
+    await page.click('[data-action="reload"]');
+    await page.keyboard.press("w");
+    assert.match(await page.locator("#bindingStatus").textContent(), /já está/);
+    await page.keyboard.press("Escape");
+    assert.equal(await page.locator("#controlsModal").isVisible(), true);
+    await page.click('[data-action="reload"]');
+    await page.keyboard.press("l");
+    await page.click('[data-action="forward"]');
+    await page.keyboard.press("o");
+    await page
+      .locator("#keybindingsList summary")
+      .filter({ hasText: "Equipamentos" })
+      .click();
+    await page.click('[data-action="skill"]');
+    await page.keyboard.press("n");
+    await page.screenshot({
+      path: path.join(artifacts, "configurable-keys.png"),
+    });
+    await page.click("#btnCloseControls");
+    await page.reload();
+    await page.waitForFunction(() => !!window.__arenaTest);
+    assert.equal(
+      await page.evaluate(() => __arenaTest.bindings.label("reload")),
+      "L",
+    );
+    assert.equal(
+      await page.evaluate(() => __arenaTest.bindings.label("forward")),
+      "O",
+    );
+    passed(
+      "Editor rejeita conflitos, Escape cancela captura e teclas persistem",
+    );
     await page.evaluate(() => {
       __arenaTest.applyQuality("low");
       __arenaTest.state.botsShoot = false;
     });
     await page.click("#playBtn");
     await page.waitForFunction(() => __arenaTest.state.started);
+    const stationary = await page.evaluate(() => __arenaTest.player.pos.z);
     await page.keyboard.down("w");
-    await page.waitForTimeout(350);
+    await page.waitForTimeout(200);
     await page.keyboard.up("w");
+    assert.equal(
+      await page.evaluate(() => __arenaTest.player.pos.z),
+      stationary,
+    );
+    await page.keyboard.down("o");
+    await page.waitForTimeout(350);
+    await page.keyboard.up("o");
     const moved = await page.evaluate(() => __arenaTest.player.pos.z);
     assert(moved < 14);
     passed("Movimentação no teclado");
+    const magazines = await page.evaluate(() => {
+      const t = __arenaTest;
+      t.state.ammo = 9;
+      t.selectWeapon("scar");
+      t.state.ammo = 17;
+      t.selectWeapon("mp40");
+      const first = t.state.ammo;
+      t.selectWeapon("scar");
+      const second = t.state.ammo;
+      t.selectWeapon("mp40");
+      return { first, second };
+    });
+    assert.deepEqual(magazines, { first: 9, second: 17 });
+    passed("Trocar de arma preserva a munição de cada pente");
+    await page.evaluate(() => {
+      __arenaTest.clock.now += 1000;
+      __arenaTest.state.lastShotAt = 0;
+    });
+    await page.mouse.click(700, 300);
+    await page.waitForFunction(() => __arenaTest.state.ammo < 9);
+    await page.evaluate(() => (__arenaTest.state.ammo = 9));
+    passed("Clique rápido registra o tiro mesmo entre quadros");
+    const cancelled = await page.evaluate(() => {
+      const t = __arenaTest;
+      t.startReload();
+      t.selectWeapon("scar");
+      t.selectWeapon("mp40");
+      return { ammo: t.state.ammo, reloading: t.state.reloading };
+    });
+    assert.deepEqual(cancelled, { ammo: 9, reloading: false });
+    await page.keyboard.press("r");
+    assert.equal(await page.evaluate(() => __arenaTest.state.reloading), false);
+    await page.keyboard.press("l");
+    await page.waitForFunction(() => __arenaTest.state.ammo === 28);
+    assert.equal(
+      await page.evaluate(() => __arenaTest.magazines.read("scar")),
+      17,
+    );
+    await page.keyboard.press("n");
+    await page.waitForFunction(
+      () => __arenaTest.player.skillActiveUntil > __arenaTest.clock.now,
+    );
+    assert.match(await page.locator("#uiSkill").textContent(), /\[N\]/);
+    passed(
+      "Recarga cancelada não repõe munição; novas teclas executam ações e atualizam HUD",
+    );
+    const articulation = await page.evaluate(() => {
+      const c = __arenaTest.playerChar;
+      return {
+        knee: !!c.leftKneePivot,
+        elbow: c.rightElbowPivot.rotation.x,
+        gun: c.gunHolder.parent === c.rightElbowPivot,
+      };
+    });
+    assert.equal(articulation.knee, true);
+    assert.equal(articulation.gun, true);
+    assert(Math.abs(articulation.elbow) > 0.01);
+    passed("Personagem tem joelhos e cotovelos animados e arma presa à mão");
     await page.evaluate(() => {
       const t = __arenaTest;
       t.state.ammo = 1;
@@ -228,6 +331,18 @@ function passed(name, data) {
       false,
     );
     passed("Presets gráficos alteram renderização e sombras");
+    await page.click("#btnControlsPause");
+    await page.click("#btnResetBindings");
+    await page.keyboard.press("Escape");
+    assert.equal(
+      await page.evaluate(() => __arenaTest.bindings.label("reload")),
+      "R",
+    );
+    assert.equal(
+      await page.evaluate(() => __arenaTest.bindings.label("forward")),
+      "W",
+    );
+    passed("Restaurar padrão funciona pelo editor de teclas");
     await page.click("#btnExitLobby");
     for (const mode of ["br", "x1bot", "horda", "cs"]) {
       await page.click(`[data-mode="${mode}"]`);
@@ -365,6 +480,41 @@ function passed(name, data) {
     assert.equal(head.head, true);
     assert.equal(head.width, 0.46);
     passed("Área de acerto da cabeça acompanha o avatar de blocos");
+    const speeds = await page.evaluate(() => {
+      const t = __arenaTest,
+        results = [];
+      for (const fps of [5, 10, 30, 60, 144]) {
+        t.state.mode = "treino";
+        t.startMatch();
+        t.state.botsShoot = false;
+        t.state.aimMode = "total";
+        t.state.camYaw = 0;
+        t.state.camPitch = 0;
+        t.clock.now = 10000;
+        t.clock.lastReal = 0;
+        t.clock.accumulator = 0;
+        t.keys.KeyW = true;
+        t.state.ammo = 1;
+        t.startReload();
+        for (let i = 1; i <= fps * 2; i++)
+          t.clock.advance((i * 1000) / fps, true, t.simulate);
+        results.push({
+          fps,
+          z: t.player.pos.z,
+          ammo: t.state.ammo,
+          now: t.clock.now,
+        });
+        t.leaveGame();
+      }
+      t.clock.lastReal = performance.now();
+      return results;
+    });
+    for (const result of speeds) {
+      assert(Math.abs(result.z - 3) < 0.0001);
+      assert.equal(result.ammo, 28);
+      assert(Math.abs(result.now - 12000) < 0.0001);
+    }
+    passed("Movimento e recarga equivalentes na simulação de 5 a 144 FPS");
     const memory = await page.evaluate(() => {
       const t = __arenaTest;
       t.state.mode = "treino";

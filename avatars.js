@@ -6,8 +6,9 @@ window.ArenaAvatars = (() => {
     const shared = ArenaRuntime.shared;
     if (!geometries)
       geometries = {
-        leg: shared(new THREE.BoxGeometry(0.32, 0.76, 0.36)),
-        arm: shared(new THREE.BoxGeometry(0.27, 0.61, 0.34)),
+        leg: shared(new THREE.BoxGeometry(0.32, 0.36, 0.36)),
+        upperArm: shared(new THREE.BoxGeometry(0.27, 0.3, 0.34)),
+        forearm: shared(new THREE.BoxGeometry(0.25, 0.28, 0.32)),
         torso: shared(new THREE.BoxGeometry(0.7, 0.65, 0.4)),
         head: shared(new THREE.BoxGeometry(0.45, 0.43, 0.43)),
         shoe: shared(new THREE.BoxGeometry(0.34, 0.15, 0.42)),
@@ -29,8 +30,10 @@ window.ArenaAvatars = (() => {
       darkMat = mat(0x142036),
       shoeMat = mat(0xf3f0e7);
     const root = new THREE.Group(),
-      bodyPivot = new THREE.Group();
+      bodyPivot = new THREE.Group(),
+      posePivot = new THREE.Group();
     root.add(bodyPivot);
+    bodyPivot.add(posePivot);
     const mesh = (geo, material, x = 0, y = 0, z = 0) => {
       const item = new THREE.Mesh(geo, material);
       item.position.set(x, y, z);
@@ -42,18 +45,36 @@ window.ArenaAvatars = (() => {
       const p = new THREE.Group();
       p.position.set(x, y, 0);
       p.add(mesh(geo, material, 0, cy));
-      bodyPivot.add(p);
+      posePivot.add(p);
       return p;
     };
-    const leftLegPivot = pivot(-0.19, 0.8, geometries.leg, pants, -0.38);
-    const rightLegPivot = pivot(0.19, 0.8, geometries.leg, pants, -0.38);
-    for (const leg of [leftLegPivot, rightLegPivot])
-      leg.add(mesh(geometries.shoe, shoeMat, 0, -0.72, -0.025));
-    const leftArmPivot = pivot(-0.5, 1.44, geometries.arm, armMat, -0.265);
-    const rightArmPivot = pivot(0.5, 1.44, geometries.arm, armMat, -0.265);
-    for (const arm of [leftArmPivot, rightArmPivot])
-      arm.add(mesh(geometries.hand, skinMat, 0, -0.57));
-    bodyPivot.add(mesh(geometries.torso, torsoMat, 0, 1.14));
+    const leftLegPivot = pivot(-0.19, 0.8, geometries.leg, pants, -0.18);
+    const rightLegPivot = pivot(0.19, 0.8, geometries.leg, pants, -0.18);
+    const knees = [leftLegPivot, rightLegPivot].map((leg) => {
+      const knee = new THREE.Group();
+      knee.position.y = -0.36;
+      knee.add(
+        mesh(geometries.leg, pants, 0, -0.18),
+        mesh(geometries.shoe, shoeMat, 0, -0.36, -0.025),
+      );
+      leg.add(knee);
+      return knee;
+    });
+    const [leftKneePivot, rightKneePivot] = knees;
+    const leftArmPivot = pivot(-0.5, 1.44, geometries.upperArm, armMat, -0.12);
+    const rightArmPivot = pivot(0.5, 1.44, geometries.upperArm, armMat, -0.12);
+    const elbows = [leftArmPivot, rightArmPivot].map((arm) => {
+      const elbow = new THREE.Group();
+      elbow.position.y = -0.27;
+      elbow.add(
+        mesh(geometries.forearm, armMat, 0, -0.14),
+        mesh(geometries.hand, skinMat, 0, -0.3),
+      );
+      arm.add(elbow);
+      return elbow;
+    });
+    const [leftElbowPivot, rightElbowPivot] = elbows;
+    posePivot.add(mesh(geometries.torso, torsoMat, 0, 1.14));
     const chestStripe = mesh(
       new THREE.BoxGeometry(0.39, 0.055, 0.012),
       shoeMat,
@@ -61,14 +82,14 @@ window.ArenaAvatars = (() => {
       1.25,
       -0.207,
     );
-    bodyPivot.add(chestStripe);
+    posePivot.add(chestStripe);
     if (opts.backpack)
-      bodyPivot.add(
+      posePivot.add(
         mesh(new THREE.BoxGeometry(0.44, 0.43, 0.18), darkMat, 0, 1.15, 0.29),
       );
     const headGroup = new THREE.Group();
     headGroup.position.y = 1.69;
-    bodyPivot.add(headGroup);
+    posePivot.add(headGroup);
     headGroup.add(mesh(geometries.head, skinMat));
     headGroup.add(mesh(geometries.hair, hairMat, 0, 0.19, 0.015));
     headGroup.add(
@@ -83,7 +104,8 @@ window.ArenaAvatars = (() => {
     );
     headGroup.add(helmet);
     const gunHolder = new THREE.Group();
-    gunHolder.position.set(0, -0.48, -0.22);
+    gunHolder.position.set(0, -0.3, -0.06);
+    gunHolder.rotation.x = -Math.PI / 2;
     const currentGun = buildWeaponModel(
       opts.weaponKey || "mp40",
       opts.evoSkin || "padrao",
@@ -105,7 +127,8 @@ window.ArenaAvatars = (() => {
     leftGunHolder.position.copy(gunHolder.position);
     leftGunHolder.add(buildWeaponModel("vector", opts.evoSkin || "padrao"));
     leftGunHolder.visible = false;
-    leftArmPivot.add(leftGunHolder);
+    leftGunHolder.rotation.x = -Math.PI / 2;
+    leftElbowPivot.add(leftGunHolder);
     const leftMuzzlePoint = new THREE.Object3D();
     leftMuzzlePoint.position.copy(muzzlePoint.position);
     leftGunHolder.add(leftMuzzlePoint);
@@ -118,10 +141,16 @@ window.ArenaAvatars = (() => {
     );
     flagGroup.position.set(0, -0.35, -0.1);
     flagGroup.visible = false;
-    rightArmPivot.add(gunHolder, flagGroup);
+    rightElbowPivot.add(gunHolder);
+    rightArmPivot.add(flagGroup);
     return {
       root,
       bodyPivot,
+      posePivot,
+      leftKneePivot,
+      rightKneePivot,
+      leftElbowPivot,
+      rightElbowPivot,
       headGroup,
       helmet,
       hatMat,

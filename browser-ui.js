@@ -23,6 +23,8 @@ window.ArenaUI = (() => {
     createCharacter,
     applyQuality,
     persistSave,
+    bindings,
+    onBindingsChanged,
     pauseGame,
     resumeGame,
     restartGame,
@@ -129,14 +131,29 @@ window.ArenaUI = (() => {
     $("btnResume").onclick = resumeGame;
     $("btnRestart").onclick = restartGame;
     $("btnExitLobby").onclick = leaveGame;
+    function refreshHints() {
+      for (const item of document.querySelectorAll("[data-binding-group]"))
+        item.textContent = item.dataset.bindingGroup
+          .split(",")
+          .map((id) => bindings.label(id))
+          .join(" ");
+    }
+    const keyEditor = ArenaControlsUI.init(bindings, () => {
+      onBindingsChanged();
+      refreshHints();
+    });
+    refreshHints();
     let controlsTrigger;
     function controls(event) {
       controlsTrigger = event.currentTarget;
+      keyEditor.cancel();
       $("controlsModal").classList.remove("hidden");
-      $("btnCloseControls").focus();
+      $("btnResetBindings").focus({ preventScroll: true });
+      $("controlsModal").querySelector(".modal").scrollTop = 0;
     }
     $("btnControlsLobby").onclick = $("btnControlsPause").onclick = controls;
     $("btnCloseControls").onclick = () => {
+      keyEditor.cancel();
       $("controlsModal").classList.add("hidden");
       controlsTrigger?.focus();
     };

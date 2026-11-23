@@ -325,10 +325,10 @@
         </div>
         <footer class="lobby-footer">
           <span
-            ><kbd>W A S D</kbd> Mover <kbd>MOUSE</kbd> Mirar / atirar
-            <kbd>ESC</kbd> Menu</span
+            ><kbd data-binding-group="forward,left,backward,right">W A S D</kbd>
+            Mover <kbd>MOUSE</kbd> Mirar / atirar <kbd>ESC</kbd> Menu</span
           ><button id="btnControlsLobby" class="text-button">
-            Ver todos os controles ↗
+            Controles e teclas ↗
           </button>
         </footer>
         <details class="missions-details">
@@ -370,7 +370,9 @@
           </select></label
         >
         <div id="pauseSettingsHost"></div>
-        <button id="btnControlsPause" class="text-button">Ver controles</button>
+        <button id="btnControlsPause" class="text-button">
+          Configurar teclas
+        </button>
       </section>
     </div>
     <div
@@ -383,29 +385,29 @@
       <section class="modal controls-shell">
         <span class="eyebrow">SEU GUIA DA ARENA</span>
         <h1 id="controlsTitle">Pegue o jeito.</h1>
-        <div class="control-list">
-          <div><kbd>W A S D</kbd><span>Mover</span></div>
-          <div><kbd>SHIFT</kbd><span>Correr</span></div>
-          <div><kbd>ESPAÇO</kbd><span>Pular</span></div>
-          <div><kbd>C / CTRL</kbd><span>Agachar</span></div>
+        <p class="controls-intro">
+          Suas teclas, seu jeito de jogar. As mudanças são salvas neste
+          navegador.
+        </p>
+        <div class="control-list mouse-controls">
           <div><kbd>CLIQUE ESQ.</kbd><span>Atirar</span></div>
           <div><kbd>CLIQUE DIR.</kbd><span>Mirar</span></div>
-          <div><kbd>RODA / 1–0 / Y</kbd><span>Trocar arma</span></div>
-          <div><kbd>R</kbd><span>Recarregar</span></div>
-          <div><kbd>G / V</kbd><span>Parede de gel</span></div>
-          <div><kbd>E / I</kbd><span>Kit / inalador</span></div>
-          <div><kbd>T / M / X</kbd><span>Granada / mina / fumaça</span></div>
-          <div><kbd>Z / K</kbd><span>Habilidade / VANT</span></div>
-          <div><kbd>ENTER</kbd><span>Veículo / tirolesa</span></div>
-          <div>
-            <kbd>ALT / U / B</kbd><span>Olhar livre / ombro / emote</span>
-          </div>
-          <div>
-            <kbd>Q / F / CLIQUE MEIO</kbd
-            ><span>Arma anterior / atirar / marcar</span>
-          </div>
-          <div><kbd>ESC / P / H</kbd><span>Menu e configurações</span></div>
+          <div><kbd>RODA</kbd><span>Trocar arma</span></div>
+          <div><kbd>CLIQUE MEIO</kbd><span>Marcar posição</span></div>
         </div>
+        <div class="binding-toolbar">
+          <h2>Teclado</h2>
+          <button type="button" id="btnResetBindings" class="text-button">
+            Restaurar padrão
+          </button>
+        </div>
+        <p
+          id="bindingStatus"
+          class="binding-status"
+          role="status"
+          aria-live="polite"
+        ></p>
+        <div id="keybindingsList"></div>
         <button id="btnCloseControls" class="play-btn">
           ENTENDI <span>✓</span>
         </button>
@@ -468,7 +470,11 @@
     <script src="vendor/three.min.js"></script>
     <script src="vendor/peerjs.min.js"></script>
     <script src="runtime.js"></script>
+    <script src="combat-state.js"></script>
+    <script src="controls.js"></script>
+    <script src="controls-ui.js"></script>
     <script src="avatars.js"></script>
+    <script src="avatar-motion.js"></script>
     <script src="browser-ui.js"></script>
     <script src="game.js"></script>
   </body>

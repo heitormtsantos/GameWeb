@@ -2,6 +2,7 @@ BLOCK ARENA — EDIÇÃO NAVEGADOR
 Versão local de 23/11/2026, baseada no index.html fornecido.
 
 COMO JOGAR
+Jogue pelo link: https://heitormtsantos.github.io/GameWeb/
 Abra downloads/block-arena.html no Chrome ou Edge. Esse arquivo reúne o jogo inteiro:
 não precisa instalar nada nem carregar bibliotecas de um CDN.
 Alternativamente, baixe o repositório inteiro e abra seu index.html.
@@ -17,8 +18,15 @@ G/V: gel; E/I: kit/inalador; T: segurar e soltar granada; M: mina; X: fumaça.
 Z: habilidade; K: VANT; Enter: veículo/tirolesa; Alt: olhar livre.
 Esc/P/H: menu. Abra “Ver todos os controles” para consultar a lista completa.
 Sensibilidade, assistência de mira, bots e locutor ficam no menu de pausa.
+Em Controles e teclas, clique na tecla de uma ação e pressione a substituta.
+Esc cancela a captura e permanece reservado para o menu. Conflitos são indicados;
+Restaurar padrão devolve as teclas originais. O HUD acompanha as novas teclas.
 
 O QUE MUDOU
+- Pente independente por arma; troca e recarga cancelada não repõem munição.
+- Simulação fixa de 60 Hz, acumulando passos entre renderizações lentas.
+- Joelhos, cotovelos, postura de mira e amortecimento na aterrissagem.
+- Configuração de teclas persistente, conflitos e restauração do padrão.
 - Pausa/continuar preservam a partida local, inclusive recargas e granadas.
 - Trocar de aba pausa a partida local. Ela só retoma quando você continuar.
 - Reinício e saída limpam granadas, paredes, fumaça, efeitos e ações pendentes.

@@ -1,19 +1,30 @@
 VALIDAÇÃO — BLOCK ARENA — 23/11/2026
 
-Navegador: Chrome headless com WebGL por SwiftShader (renderização por software).
-O teste não mede FPS de uma placa gráfica real.
+12 testes unitários e 28 verificações no navegador aprovados.
+Navegador: Chrome headless com WebGL por SwiftShader. Esses testes não medem FPS em uma placa gráfica real.
 
+UNITÁRIOS
+Pentes independentes por arma; reset de pentes; configuração/persistência de teclas; conflitos; recuperação de mapa inválido; restauração; atalhos simultâneos.
+Relógio fixo em 5, 10, 30, 60 e 144 FPS; pausa de ações; backlog de quadro longo preservado com orçamento de execução.
+
+NAVEGADOR
 PASSOU: Inicialização com JSON corrompido
 PASSOU: Valores inválidos no save recuperados
 PASSOU: Armazenamento bloqueado não impede jogar
 PASSOU: Personalização real e persistência do avatar
+PASSOU: Editor rejeita conflitos, Escape cancela captura e teclas persistem
 PASSOU: Movimentação no teclado
+PASSOU: Trocar de arma preserva a munição de cada pente
+PASSOU: Clique rápido registra o tiro mesmo entre quadros
+PASSOU: Recarga cancelada não repõe munição; novas teclas executam ações e atualizam HUD
+PASSOU: Personagem tem joelhos e cotovelos animados e arma presa à mão
 PASSOU: Pausa congela posição, recarga, granada e ações agendadas
 PASSOU: Continuar retoma a mesma partida
 PASSOU: Ações agendadas retomam após continuar
 PASSOU: Reinício elimina projéteis e callbacks da partida anterior
 PASSOU: Ocultar a aba pausa a partida local
 PASSOU: Presets gráficos alteram renderização e sombras
+PASSOU: Restaurar padrão funciona pelo editor de teclas
 PASSOU: BR, duelo com bot, sobrevivência e loja Contra Squad iniciam
 PASSOU: As onze armas trocam e disparam sem exceções
 PASSOU: Vitória abre resultado e revanche inicia nova partida
@@ -21,16 +32,15 @@ PASSOU: X1 exige conexão antes de iniciar
 PASSOU: Mensagens P2P inválidas e dano fora do limite rejeitados
 PASSOU: Protocolo X1 aplica dano válido e ignora resultado duplicado
 PASSOU: Área de acerto da cabeça acompanha o avatar de blocos
+PASSOU: Movimento e recarga equivalentes na simulação de 5 a 144 FPS
 PASSOU: Memória gráfica estável em 20 ciclos de efeitos e limpeza
 PASSOU: Lobby sem rolagem horizontal em 390, 768 e 1366 pixels
 PASSOU: Sem exceções JavaScript durante os testes
 
-20 ciclos de criação/renderização/limpeza de paredes, fumaça, loot, granadas e partículas:
-Geometrias: 168 antes; 168 depois.
-Texturas: 7 antes; 7 depois.
+20 ciclos de efeitos e limpeza: geometrias 164 → 164; texturas 7 → 7.
 
-As duas edições abriram por file:// com o navegador offline, sem requisições HTTP e sem exceções JavaScript. Foram verificados lobby, início, pausa, continuar, controles e retorno ao lobby.
+As edições modular e de arquivo único abriram offline por file://, sem erros ou requisições falhas. Foram verificados personalização de teclas, tiro de clique rápido, recarga com a nova tecla, pausa e retorno ao lobby.
 
-X1: protocolo exercitado com conexão simulada; conexão real entre duas redes não testada.
+A direção visual da arma em mira também foi comparada à direção da câmera; a postura mantém o cano alinhado e a mão de apoio próxima à arma.
 
-O hash SHA-256 do HTML original permanece igual ao registrado antes da implementação.
+O protocolo X1 usa conexão simulada nos testes. Uma partida real entre duas redes diferentes ainda precisa de validação.

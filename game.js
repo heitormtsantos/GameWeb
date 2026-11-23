@@ -187,6 +187,8 @@
     ["quality", ["low", "medium", "high"], "medium"],
   ])
     saved[key] = R.choice(saved[key], options, fallback);
+  const bindings = new ArenaControls.Bindings(saved.keyBindings);
+  const keyHint = (id) => bindings.label(id);
   const statsTotal = {
     kills: saved.totalKills || 0,
     capas: saved.totalCapas || 0,
@@ -265,6 +267,7 @@
       hatStyle: state.hatStyle,
       hatColor: state.hatColor,
       quality: state.quality,
+      keyBindings: bindings.snapshot(),
     });
     if (!stored && !persistSave.warned) {
       persistSave.warned = true;
@@ -1553,12 +1556,15 @@
     },
   };
 
+  const magazines = new ArenaCombat.Magazines(WEAPONS);
   const slotsBox = $("weaponSlots");
   WEAPON_ORDER.forEach((k, i) => {
     const d = document.createElement("div");
     d.className = "slot" + (k === "mp40" ? " active" : "");
     d.dataset.w = k;
-    d.innerHTML = `<b>${k === "vector" ? "Y" : i === 9 ? 0 : i + 1} • ${WEAPONS[k].short}</b><small>${WEAPONS[k].sub}</small>`;
+    d.dataset.action =
+      k === "vector" ? "weaponVector" : "weapon" + ((i + 1) % 10);
+    d.innerHTML = `<b>${keyHint(d.dataset.action)} • ${WEAPONS[k].short}</b><small>${WEAPONS[k].sub.replace(" [Y]", "")}</small>`;
     d.onclick = () => selectWeapon(k);
     slotsBox.appendChild(d);
   });
@@ -1584,10 +1590,10 @@
     curShoulder: 1,
     weaponKey: "mp40",
     prevWeaponKey: "katana",
-    ammo: 28,
     reloading: false,
     reloadEnd: 0,
     isFiring: false,
+    fireQueued: false,
     isScoped: false,
     firePressedAt: 0,
     scopePressedAt: 0,
@@ -1639,6 +1645,12 @@
     roundOver: false,
     outOfZone: false,
   };
+
+  Object.defineProperty(state, "ammo", {
+    enumerable: true,
+    get: () => magazines.read(state.weaponKey),
+    set: (value) => magazines.write(state.weaponKey, value),
+  });
 
   [
     ["sens", "Sens. Geral", 0.3, 2.5],
@@ -1838,7 +1850,7 @@
       return;
     state.prevWeaponKey = state.weaponKey;
     state.weaponKey = key;
-    state.ammo = WEAPONS[key].mag;
+    state.reloadEnd = 0;
     state.reloading = false;
     if (WEAPONS[key].melee) state.isScoped = false;
     refreshWeaponSlotLocks();
@@ -2642,6 +2654,7 @@
   };
 
   function clearArenaEntities() {
+    state.fireQueued = false;
     clock.clear();
     grenades.forEach((g) => disposeObject(g.mesh));
     grenades.length = 0;
@@ -2668,6 +2681,7 @@
     lastGelTime = -10000;
     lastNetSend = 0;
     lastZoneTick = 0;
+    pressedKeys.clear();
     for (const key in keys) keys[key] = false;
     for (let i = glooWalls.length - 1; i >= 0; i--) {
       disposeObject(glooWalls[i].mesh);
@@ -2700,6 +2714,8 @@
     resetBarrels();
   }
   function resetPlayerStats(xPos, yPos, zPos) {
+    magazines.reset();
+    ArenaMotion.reset(playerChar);
     playerChar.bodyPivot.position.y = 0;
     player.dashUntil = 0;
     state.reloading = false;
@@ -2751,6 +2767,7 @@
     updateHpUI();
   }
   function startMatch() {
+    magazines.reset();
     if (state.mode === "x1" && !(conn && conn.open)) {
       ArenaUI.notice(
         "Crie ou entre em uma sala e aguarde a conexão com seu amigo.",
@@ -3002,7 +3019,8 @@
   $("btnReadyCS").onclick = startCSRound;
 
   // CONTROLES PC
-  const keys = {};
+  const keys = {},
+    pressedKeys = new Set();
   let isLocked = false,
     wasLocked = false,
     lastMouseX = null,
@@ -3037,6 +3055,8 @@
     );
   }
   function releaseInputs() {
+    state.fireQueued = false;
+    pressedKeys.clear();
     for (const key in keys) keys[key] = false;
     state.isFiring = false;
     state.isScoped = false;
@@ -3123,6 +3143,7 @@
     }
     if (player.inVehicle || player.parachuting || player.onZipline) return;
     if (e.button === 0) {
+      state.fireQueued = true;
       state.isFiring = true;
       state.firePressedAt = clock.now;
       player.healing = false;
@@ -3242,10 +3263,13 @@
   addEventListener("keydown", (e) => {
     if (e.target.closest('input,select,textarea,[contenteditable="true"]'))
       return;
-    if (["Escape", "KeyP", "KeyH"].includes(e.code) && state.started) {
+    if (!$("controlsModal").classList.contains("hidden")) return;
+    const code = e.code === "Escape" ? "Escape" : bindings.resolve(e.code);
+    if (!code) return;
+    if (["Escape", "KeyP", "KeyH"].includes(code) && state.started) {
       e.preventDefault();
       if (!e.repeat) {
-        if (state.paused && e.code !== "KeyH") resumeGame();
+        if (state.paused && code !== "KeyH") resumeGame();
         else pauseGame();
       }
       return;
@@ -3253,26 +3277,27 @@
     if (!isPlaying()) return;
     if (
       /^(Key[A-Z]|Digit[0-9]|Arrow(Up|Down|Left|Right)|Space|Shift(Left|Right)|ControlLeft)$/.test(
-        e.code,
+        code,
       )
     )
       e.preventDefault();
     if (
       e.repeat &&
-      ["KeyC", "ControlLeft", "KeyU", "KeyB", "KeyT"].includes(e.code)
+      ["KeyC", "ControlLeft", "KeyU", "KeyB", "KeyT"].includes(code)
     )
       return;
-    if (e.code === "AltLeft" || e.code === "AltRight") {
+    if (code === "AltLeft" || code === "AltRight") {
       e.preventDefault();
       if (isPlaying() && !player.freeLook) {
         player.freeLook = true;
         player.lockedMoveYaw = state.camYaw;
       }
     }
-    keys[e.code] = true;
+    pressedKeys.add(e.code);
+    bindings.sync(keys, pressedKeys);
 
     if (!isPlaying()) return;
-    if (e.code === "Enter" && !player.dead && !player.parachuting) {
+    if (code === "Enter" && !player.dead && !player.parachuting) {
       if (player.inVehicle) {
         exitBuggySafely();
         return;
@@ -3303,22 +3328,23 @@
         }
       }
     }
-    if (player.onZipline && e.code === "Space") {
+    if (player.onZipline && code === "Space") {
       player.onZipline = false;
       player.velY = 4.5;
       player.onGround = false;
       return;
     }
     if (player.inVehicle || player.parachuting || player.onZipline) return;
-    if (e.code === "KeyF") {
+    if (code === "KeyF") {
+      state.fireQueued = true;
       initAudio();
       if (!state.isFiring) state.firePressedAt = clock.now;
       state.isFiring = true;
       player.healing = false;
       player.emoteUntil = 0;
     }
-    if (e.code === "KeyU") state.shoulderSide *= -1;
-    if (e.code === "KeyK") activateUAV(clock.now);
+    if (code === "KeyU") state.shoulderSide *= -1;
+    if (code === "KeyK") activateUAV(clock.now);
     const wKeys = {
       Digit1: "mp40",
       Digit2: "scar",
@@ -3332,18 +3358,18 @@
       Digit0: "katana",
       KeyY: "vector",
     };
-    if (wKeys[e.code]) selectWeapon(wKeys[e.code]);
-    if (e.code === "KeyQ") selectWeapon(state.prevWeaponKey);
-    if (e.code === "KeyR") startReload();
-    if (e.code === "KeyG") playerUseGel(clock.now, false);
-    if (e.code === "KeyV") playerUseGel(clock.now, true);
-    if (e.code === "KeyE") startMedkit(clock.now);
-    if (e.code === "KeyI") useInhaler();
-    if (e.code === "KeyM")
+    if (wKeys[code]) selectWeapon(wKeys[code]);
+    if (code === "KeyQ") selectWeapon(state.prevWeaponKey);
+    if (code === "KeyR") startReload();
+    if (code === "KeyG") playerUseGel(clock.now, false);
+    if (code === "KeyV") playerUseGel(clock.now, true);
+    if (code === "KeyE") startMedkit(clock.now);
+    if (code === "KeyI") useInhaler();
+    if (code === "KeyM")
       plantLandmine(player.pos.x, player.pos.y, player.pos.z, clock.now, false);
-    if (e.code === "KeyX") throwSmoke(clock.now);
-    if (e.code === "KeyZ") activateSkill(clock.now);
-    if (e.code === "KeyB" && !player.dead) {
+    if (code === "KeyX") throwSmoke(clock.now);
+    if (code === "KeyZ") activateSkill(clock.now);
+    if (code === "KeyB" && !player.dead) {
       player.emoteUntil = clock.now + 2200;
       playSkillSound();
       spawnSparks(
@@ -3353,30 +3379,33 @@
       );
     }
     if (
-      e.code === "KeyT" &&
+      code === "KeyT" &&
       (state.customRoom || player.nades > 0) &&
       !player.dead
     )
       player.aimingNade = true;
-    if (e.code === "KeyC" || e.code === "ControlLeft")
+    if (code === "KeyC" || code === "ControlLeft")
       player.crouching = !player.crouching;
-    if (e.code === "Space" && player.onGround && !player.dead) {
+    if (code === "Space" && player.onGround && !player.dead) {
       player.crouching = false;
       player.velY = 7.4;
       player.onGround = false;
     }
   });
   addEventListener("keyup", (e) => {
-    if (e.code === "AltLeft" || e.code === "AltRight") {
+    const code = bindings.resolve(e.code);
+    pressedKeys.delete(e.code);
+    bindings.sync(keys, pressedKeys);
+    if (!code) return;
+    if (code === "AltLeft" || code === "AltRight") {
       if (player.freeLook) {
         player.freeLook = false;
         state.camYaw = player.lockedMoveYaw;
       }
     }
-    keys[e.code] = false;
     if (!isPlaying()) return;
-    if (e.code === "KeyF") state.isFiring = false;
-    if (e.code === "KeyT" && player.aimingNade) {
+    if (code === "KeyF") state.isFiring = false;
+    if (code === "KeyT" && player.aimingNade) {
       player.aimingNade = false;
       throwGrenade(clock.now);
     }
@@ -4515,7 +4544,7 @@
       playerChar.leftArmPivot.rotation.x = 2.8;
       playerChar.rightArmPivot.rotation.x = 2.8;
       vehiclePrompt.style.display = "block";
-      vehiclePrompt.textContent = "[ESPAÇO] Soltar da Tirolesa";
+      vehiclePrompt.textContent = `[${keyHint("jump")}] Soltar da Tirolesa`;
       $("uiState").textContent = "TIROLESA";
       if (player.zipT >= 1) {
         player.onZipline = false;
@@ -4651,7 +4680,7 @@
         }
       }
       vehiclePrompt.style.display = "block";
-      vehiclePrompt.textContent = `[ENTER] Sair do Buggy • ${Math.abs(Math.round(buggy.speed * 5))} km/h`;
+      vehiclePrompt.textContent = `[${keyHint("interact")}] Sair do Buggy • ${Math.abs(Math.round(buggy.speed * 5))} km/h`;
       $("uiState").textContent = "DIRIGINDO";
       return;
     }
@@ -4661,13 +4690,13 @@
       player.pos.distanceTo(zipAnchorB) < 2.6;
     if (nearZip) {
       vehiclePrompt.style.display = "block";
-      vehiclePrompt.textContent = "Pressione [ENTER] para pegar a Tirolesa";
+      vehiclePrompt.textContent = `Pressione [${keyHint("interact")}] para pegar a Tirolesa`;
     } else if (
       (state.mode === "treino" || state.mode === "br") &&
       player.pos.distanceTo(buggy.pos) < 3.6
     ) {
       vehiclePrompt.style.display = "block";
-      vehiclePrompt.textContent = "Pressione [ENTER] para dirigir o Buggy";
+      vehiclePrompt.textContent = `Pressione [${keyHint("interact")}] para dirigir o Buggy`;
     } else vehiclePrompt.style.display = "none";
 
     if (player.healing && now >= player.healEnd) {
@@ -4806,7 +4835,7 @@
     }
 
     state.gunKick = Math.max(0, state.gunKick - 1.1 * dt);
-    playerChar.gunHolder.position.z = -0.22 + state.gunKick;
+    playerChar.gunHolder.position.z = -0.06 + state.gunKick;
     const emoting = now < player.emoteUntil;
     playerChar.flagGroup.visible = emoting;
     playerChar.currentGun.visible = !emoting;
@@ -4879,7 +4908,7 @@
     if (now - lastHudAt > 100) {
       lastHudAt = now;
       $("uiState").textContent = player.freeLook
-        ? "OLHINHO (ALT)"
+        ? `OLHAR LIVRE (${keyHint("freeLook")})`
         : emoting
           ? "BANDEIRÃO!"
           : player.healing
@@ -4892,31 +4921,38 @@
                   ? "CORRENDO"
                   : "EM PÉ";
       const inf = state.customRoom || state.mode === "treino";
-      $("uiGel").textContent = `Gel [G/V]: ${inf ? "∞" : player.gels}`;
-      $("uiKit").textContent = `Kit [E]: ${inf ? "∞" : player.kits}`;
-      $("uiInal").textContent = `Inal. [I]: ${inf ? "∞" : player.inhalers}`;
-      $("uiNade").textContent = `Gran. [T]: ${inf ? "∞" : player.nades}`;
-      $("uiMine").textContent = `Mina [M]: ${inf ? "∞" : player.mines}`;
-      $("uiSmoke").textContent = `Fum. [X]: ${inf ? "∞" : player.smokes}`;
+      $("uiGel").textContent =
+        `Gel [${keyHint("gel")}/${keyHint("crouchGel")}]: ${inf ? "∞" : player.gels}`;
+      $("uiKit").textContent =
+        `Kit [${keyHint("medkit")}]: ${inf ? "∞" : player.kits}`;
+      $("uiInal").textContent =
+        `Inal. [${keyHint("inhaler")}]: ${inf ? "∞" : player.inhalers}`;
+      $("uiNade").textContent =
+        `Gran. [${keyHint("grenade")}]: ${inf ? "∞" : player.nades}`;
+      $("uiMine").textContent =
+        `Mina [${keyHint("mine")}]: ${inf ? "∞" : player.mines}`;
+      $("uiSmoke").textContent =
+        `Fum. [${keyHint("smoke")}]: ${inf ? "∞" : player.smokes}`;
       if (state.skill === "tatsuya")
-        $("uiSkill").textContent = `[Z] Tatsuya: ${player.tatsuyaCharges}/2`;
+        $("uiSkill").textContent =
+          `[${keyHint("skill")}] Tatsuya: ${player.tatsuyaCharges}/2`;
       else {
         const cd = Math.max(0, Math.ceil((player.skillCdUntil - now) / 1000)),
           lb = state.skill === "alok" ? "Alok" : "Chrono";
         $("uiSkill").textContent =
           now < player.skillActiveUntil
-            ? `[Z] ${lb}: ATIVO`
+            ? `[${keyHint("skill")}] ${lb}: ATIVO`
             : cd > 0
-              ? `[Z] ${lb}: ${cd}s`
-              : `[Z] ${lb}: Pronto`;
+              ? `[${keyHint("skill")}] ${lb}: ${cd}s`
+              : `[${keyHint("skill")}] ${lb}: Pronto`;
       }
       const ur = Math.max(0, Math.ceil((player.uavCdUntil - now) / 1000));
       $("uiUav").textContent =
         now < player.uavActiveUntil
-          ? `[K] VANT: ATIVO`
+          ? `[${keyHint("uav")}] VANT: ATIVO`
           : ur > 0
-            ? `[K] VANT: ${ur}s`
-            : `[K] VANT: Pronto`;
+            ? `[${keyHint("uav")}] VANT: ${ur}s`
+            : `[${keyHint("uav")}] VANT: Pronto`;
     }
   }
 
@@ -4955,30 +4991,44 @@
     createCharacter,
     applyQuality,
     persistSave,
+    bindings,
+    onBindingsChanged: () => {
+      releaseInputs();
+      persistSave();
+      lastHudAt = 0;
+      refreshWeaponSlotLocks();
+      for (const slot of weaponSlots)
+        slot.querySelector("b").textContent =
+          `${keyHint(slot.dataset.action)} • ${WEAPONS[slot.dataset.w].short}`;
+    },
     pauseGame,
     resumeGame,
     restartGame,
     leaveGame,
   });
   ui.lobby();
-  let lastTime = clock.now;
   function animate(realNow) {
     requestAnimationFrame(animate);
-    const dt = clock.advance(realNow, isSimulating()),
-      now = clock.now;
-    if (!dt) {
+    if (!isSimulating()) {
+      clock.advance(realNow, false);
       fpsFrames = 0;
       fpsStart = realNow;
       ui.renderPreview();
       return;
     }
+    const dt = clock.advance(realNow, true, simulate),
+      now = clock.now;
     fpsFrames++;
     if (realNow - fpsStart >= 1000) {
       perf.textContent = `${Math.round((fpsFrames * 1000) / (realNow - fpsStart))} FPS · ${R.presets[state.quality].label}`;
       fpsFrames = 0;
       fpsStart = realNow;
     }
-    lastTime = now;
+    renderer.render(scene, camera);
+    draw2DOverlay(now, dt);
+  }
+  function simulate(dt, now) {
+    if (!isSimulating()) return false;
     if (state.timeOfDay === "chuva") {
       const rp = rainGeo.attributes.position.array;
       for (let i = 0; i < rainCount; i++) {
@@ -5195,7 +5245,15 @@
         }
         continue;
       }
-      if (isPlaying()) updateBotAI(e, dt, now);
+      if (isPlaying()) {
+        updateBotAI(e, dt, now);
+        ArenaMotion.pose(e.char, dt, {
+          grounded: true,
+          walkTime: e.walkTime,
+          aiming: state.botsShoot,
+          pitch: 0,
+        });
+      }
     }
 
     if (state.mode === "x1" && remotePlayer.alive) {
@@ -5234,6 +5292,14 @@
           remoteChar.root.position.y + 1.15,
           remoteChar.root.position.z,
         );
+      ArenaMotion.pose(remoteChar, dt, {
+        grounded: true,
+        walkTime: remotePlayer.walkTime,
+        aiming: remotePlayer.aimPitch > -50,
+        pitch: remotePlayer.aimPitch > -50 ? remotePlayer.aimPitch : 0,
+        akimbo: remotePlayer.weapon === "vector",
+        emoting: remotePlayer.emote,
+      });
       remoteChar.flagGroup.visible = remotePlayer.emote;
       remoteChar.currentGun.visible = !remotePlayer.emote;
       if (remotePlayer.emote)
@@ -5252,8 +5318,22 @@
       updatePlayer(dt, now);
       updateCamera(dt);
       updateAimAssist(dt, now);
-      updateCamera(dt);
-      if (state.isFiring) fireWeapon(now);
+      updateCamera(0);
+      ArenaMotion.pose(playerChar, dt, {
+        grounded: player.onGround,
+        pitch: state.camPitch,
+        walkTime: player.walkTime,
+        aiming: state.isScoped || state.isFiring,
+        reloading: state.reloading,
+        akimbo: !!WEAPONS[state.weaponKey].akimbo,
+        emoting: now < player.emoteUntil,
+        riding: player.inVehicle || player.onZipline || player.parachuting,
+      });
+      scene.updateMatrixWorld(true);
+      if (state.isFiring || state.fireQueued) {
+        fireWeapon(now);
+        state.fireQueued = false;
+      }
     } else updateCamera(dt);
     for (let i = tracers3d.length - 1; i >= 0; i--) {
       const t = tracers3d[i];
@@ -5288,8 +5368,7 @@
         particles3d.splice(i, 1);
       }
     }
-    renderer.render(scene, camera);
-    draw2DOverlay(now, dt);
+    return isSimulating();
   }
 
   // OVERLAY 2D

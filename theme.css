@@ -1125,3 +1125,105 @@ kbd {
 .play-btn {
   font-size: 14px;
 }
+.controls-intro {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+.mouse-controls {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 10px 0 18px;
+  border-bottom: 1px solid var(--line);
+}
+.mouse-controls kbd {
+  font-size: 8px;
+}
+.binding-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
+.binding-toolbar h2 {
+  font-size: 16px;
+  margin: 0;
+}
+.binding-status {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--blue);
+  background: #e7eafb;
+  border: 1px solid #d0d7f3;
+  padding: 10px;
+  border-radius: 7px;
+  min-height: 38px;
+}
+.binding-status {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  box-shadow: 0 3px 8px #14203608;
+}
+#keybindingsList {
+  margin: 8px 0 22px;
+}
+#keybindingsList > details {
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
+}
+#keybindingsList summary {
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+.binding-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 18px;
+  padding-top: 13px;
+}
+.binding-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 36px;
+  font-size: 11px;
+}
+.binding-key {
+  min-width: 58px;
+  max-width: 120px;
+  padding: 8px;
+  border: 1px solid #c5cbbd;
+  border-bottom-width: 3px;
+  border-radius: 6px;
+  background: #e8ecdf;
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 900;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.binding-key:hover {
+  background: var(--lime);
+}
+.binding-key.capturing {
+  background: var(--lime);
+  border-color: #a2b936;
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+@media (max-width: 550px) {
+  .binding-grid {
+    grid-template-columns: 1fr;
+  }
+  .mouse-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+  .binding-row {
+    font-size: 12px;
+  }
+}

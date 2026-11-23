@@ -1693,6 +1693,108 @@ kbd {
 .play-btn {
   font-size: 14px;
 }
+.controls-intro {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+.mouse-controls {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 10px 0 18px;
+  border-bottom: 1px solid var(--line);
+}
+.mouse-controls kbd {
+  font-size: 8px;
+}
+.binding-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
+.binding-toolbar h2 {
+  font-size: 16px;
+  margin: 0;
+}
+.binding-status {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--blue);
+  background: #e7eafb;
+  border: 1px solid #d0d7f3;
+  padding: 10px;
+  border-radius: 7px;
+  min-height: 38px;
+}
+.binding-status {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  box-shadow: 0 3px 8px #14203608;
+}
+#keybindingsList {
+  margin: 8px 0 22px;
+}
+#keybindingsList > details {
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
+}
+#keybindingsList summary {
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+.binding-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 18px;
+  padding-top: 13px;
+}
+.binding-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 36px;
+  font-size: 11px;
+}
+.binding-key {
+  min-width: 58px;
+  max-width: 120px;
+  padding: 8px;
+  border: 1px solid #c5cbbd;
+  border-bottom-width: 3px;
+  border-radius: 6px;
+  background: #e8ecdf;
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 900;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.binding-key:hover {
+  background: var(--lime);
+}
+.binding-key.capturing {
+  background: var(--lime);
+  border-color: #a2b936;
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+@media (max-width: 550px) {
+  .binding-grid {
+    grid-template-columns: 1fr;
+  }
+  .mouse-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+  .binding-row {
+    font-size: 12px;
+  }
+}
 
 </style>
   <!-- Third-party licenses
@@ -2055,10 +2157,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         </div>
         <footer class="lobby-footer">
           <span
-            ><kbd>W A S D</kbd> Mover <kbd>MOUSE</kbd> Mirar / atirar
-            <kbd>ESC</kbd> Menu</span
+            ><kbd data-binding-group="forward,left,backward,right">W A S D</kbd>
+            Mover <kbd>MOUSE</kbd> Mirar / atirar <kbd>ESC</kbd> Menu</span
           ><button id="btnControlsLobby" class="text-button">
-            Ver todos os controles ↗
+            Controles e teclas ↗
           </button>
         </footer>
         <details class="missions-details">
@@ -2100,7 +2202,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           </select></label
         >
         <div id="pauseSettingsHost"></div>
-        <button id="btnControlsPause" class="text-button">Ver controles</button>
+        <button id="btnControlsPause" class="text-button">
+          Configurar teclas
+        </button>
       </section>
     </div>
     <div
@@ -2113,29 +2217,29 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       <section class="modal controls-shell">
         <span class="eyebrow">SEU GUIA DA ARENA</span>
         <h1 id="controlsTitle">Pegue o jeito.</h1>
-        <div class="control-list">
-          <div><kbd>W A S D</kbd><span>Mover</span></div>
-          <div><kbd>SHIFT</kbd><span>Correr</span></div>
-          <div><kbd>ESPAÇO</kbd><span>Pular</span></div>
-          <div><kbd>C / CTRL</kbd><span>Agachar</span></div>
+        <p class="controls-intro">
+          Suas teclas, seu jeito de jogar. As mudanças são salvas neste
+          navegador.
+        </p>
+        <div class="control-list mouse-controls">
           <div><kbd>CLIQUE ESQ.</kbd><span>Atirar</span></div>
           <div><kbd>CLIQUE DIR.</kbd><span>Mirar</span></div>
-          <div><kbd>RODA / 1–0 / Y</kbd><span>Trocar arma</span></div>
-          <div><kbd>R</kbd><span>Recarregar</span></div>
-          <div><kbd>G / V</kbd><span>Parede de gel</span></div>
-          <div><kbd>E / I</kbd><span>Kit / inalador</span></div>
-          <div><kbd>T / M / X</kbd><span>Granada / mina / fumaça</span></div>
-          <div><kbd>Z / K</kbd><span>Habilidade / VANT</span></div>
-          <div><kbd>ENTER</kbd><span>Veículo / tirolesa</span></div>
-          <div>
-            <kbd>ALT / U / B</kbd><span>Olhar livre / ombro / emote</span>
-          </div>
-          <div>
-            <kbd>Q / F / CLIQUE MEIO</kbd
-            ><span>Arma anterior / atirar / marcar</span>
-          </div>
-          <div><kbd>ESC / P / H</kbd><span>Menu e configurações</span></div>
+          <div><kbd>RODA</kbd><span>Trocar arma</span></div>
+          <div><kbd>CLIQUE MEIO</kbd><span>Marcar posição</span></div>
         </div>
+        <div class="binding-toolbar">
+          <h2>Teclado</h2>
+          <button type="button" id="btnResetBindings" class="text-button">
+            Restaurar padrão
+          </button>
+        </div>
+        <p
+          id="bindingStatus"
+          class="binding-status"
+          role="status"
+          aria-live="polite"
+        ></p>
+        <div id="keybindingsList"></div>
         <button id="btnCloseControls" class="play-btn">
           ENTENDI <span>✓</span>
         </button>
@@ -2251,19 +2355,35 @@ window.ArenaRuntime = (() => {
       this.lastReal = performance.now();
       this.tasks = new Map();
       this.nextId = 0;
+      this.accumulator = 0;
+      this.step = 1 / 60;
     }
-    advance(real, active) {
-      const dt = Math.max(0, Math.min(0.05, (real - this.lastReal) / 1000));
+    advance(real, active, update = () => {}) {
+      const elapsed = Math.max(0, (real - this.lastReal) / 1000);
       this.lastReal = real;
-      if (!active) return 0;
-      this.now += dt * 1000;
-      for (const [id, task] of [...this.tasks]) {
-        if (this.tasks.has(id) && task.at <= this.now) {
-          this.tasks.delete(id);
-          task.fn();
+      if (!active) {
+        this.accumulator = 0;
+        return 0;
+      }
+      this.accumulator += elapsed;
+      let steps = 0;
+      // Bound work per render, retaining the backlog instead of slowing down time.
+      while (this.accumulator + 1e-9 >= this.step && steps < 120) {
+        this.accumulator = Math.max(0, this.accumulator - this.step);
+        this.now += this.step * 1000;
+        steps++;
+        for (const [id, task] of [...this.tasks]) {
+          if (this.tasks.has(id) && task.at <= this.now + 1e-7) {
+            this.tasks.delete(id);
+            task.fn();
+          }
+        }
+        if (update(this.step, this.now) === false) {
+          this.accumulator = 0;
+          break;
         }
       }
-      return dt;
+      return steps * this.step;
     }
     schedule(fn, ms) {
       const id = ++this.nextId;
@@ -2334,6 +2454,273 @@ window.ArenaRuntime = (() => {
 
 </script>
     <script>
+/* Each weapon owns its magazine. Equipping never grants ammunition. */
+window.ArenaCombat = (() => {
+  "use strict";
+  class Magazines {
+    constructor(weapons) {
+      this.weapons = weapons;
+      this.reset();
+    }
+    reset() {
+      this.amounts = Object.fromEntries(
+        Object.entries(this.weapons).map(([key, weapon]) => [key, weapon.mag]),
+      );
+    }
+    read(key) {
+      return this.amounts[key] ?? 0;
+    }
+    write(key, value) {
+      if (!Object.prototype.hasOwnProperty.call(this.weapons, key)) return;
+      this.amounts[key] = Number.isFinite(value)
+        ? Math.max(0, Math.min(this.weapons[key].mag, Math.floor(value)))
+        : 0;
+    }
+  }
+  return { Magazines };
+})();
+
+</script>
+    <script>
+/* Physical keys are translated to the game's logical actions at the input boundary. */
+window.ArenaControls = (() => {
+  "use strict";
+  const actions = [
+    ["forward", "Avançar", "KeyW", "Movimento"],
+    ["backward", "Recuar", "KeyS", "Movimento"],
+    ["left", "Esquerda", "KeyA", "Movimento"],
+    ["right", "Direita", "KeyD", "Movimento"],
+    ["sprint", "Correr", "ShiftLeft", "Movimento"],
+    ["jump", "Pular", "Space", "Movimento"],
+    ["crouch", "Agachar", "KeyC", "Movimento"],
+    ["freeLook", "Olhar livre", "AltLeft", "Movimento"],
+    ["fire", "Atirar pelo teclado", "KeyF", "Combate"],
+    ["reload", "Recarregar", "KeyR", "Combate"],
+    ["previous", "Arma anterior", "KeyQ", "Combate"],
+    ["shoulder", "Trocar ombro", "KeyU", "Combate"],
+    ["gel", "Parede de gel", "KeyG", "Equipamentos"],
+    ["crouchGel", "Gel agachado", "KeyV", "Equipamentos"],
+    ["medkit", "Kit de cura", "KeyE", "Equipamentos"],
+    ["inhaler", "Inalador", "KeyI", "Equipamentos"],
+    ["grenade", "Granada (segurar e soltar)", "KeyT", "Equipamentos"],
+    ["mine", "Mina", "KeyM", "Equipamentos"],
+    ["smoke", "Fumaça", "KeyX", "Equipamentos"],
+    ["skill", "Habilidade", "KeyZ", "Equipamentos"],
+    ["uav", "VANT", "KeyK", "Equipamentos"],
+    ["interact", "Interagir", "Enter", "Atalhos"],
+    ["emote", "Emote", "KeyB", "Atalhos"],
+    ["menu", "Abrir / fechar menu", "KeyP", "Atalhos"],
+    ["settings", "Abrir ajustes", "KeyH", "Atalhos"],
+    ...Array.from({ length: 10 }, (_, i) => [
+      "weapon" + ((i + 1) % 10),
+      "Arma " + ((i + 1) % 10),
+      "Digit" + ((i + 1) % 10),
+      "Armas",
+    ]),
+    ["weaponVector", "Vector dupla", "KeyY", "Armas"],
+  ].map(([id, label, canonical, group]) => ({ id, label, canonical, group }));
+  const defaults = Object.fromEntries(
+    actions.map((action) => [action.id, action.canonical]),
+  );
+  const aliases = {
+    ArrowUp: "KeyW",
+    ArrowDown: "KeyS",
+    ArrowLeft: "KeyA",
+    ArrowRight: "KeyD",
+    ShiftRight: "ShiftLeft",
+    ControlLeft: "KeyC",
+    AltRight: "AltLeft",
+  };
+  const allowed = (code) =>
+    typeof code === "string" &&
+    /^(Key[A-Z]|Digit[0-9]|Space|Enter|Backspace|CapsLock|Shift(Left|Right)|Control(Left|Right)|Alt(Left|Right)|Arrow(Up|Down|Left|Right)|Insert|Delete|Home|End|PageUp|PageDown)$/.test(
+      code,
+    );
+  function label(code) {
+    if (/^Key[A-Z]$/.test(code)) return code.slice(3);
+    if (/^Digit\d$/.test(code)) return code.slice(5);
+    return (
+      {
+        Space: "Espaço",
+        Enter: "Enter",
+        ShiftLeft: "Shift E",
+        ShiftRight: "Shift D",
+        ControlLeft: "Ctrl E",
+        ControlRight: "Ctrl D",
+        AltLeft: "Alt E",
+        AltRight: "Alt D",
+        ArrowUp: "↑",
+        ArrowDown: "↓",
+        ArrowLeft: "←",
+        ArrowRight: "→",
+        Backspace: "⌫",
+        CapsLock: "Caps",
+        PageUp: "PgUp",
+        PageDown: "PgDn",
+      }[code] || code
+    );
+  }
+  class Bindings {
+    constructor(saved) {
+      this.values = { ...defaults };
+      if (saved && typeof saved === "object" && !Array.isArray(saved)) {
+        const candidate = actions.map((action) => saved[action.id]);
+        if (
+          candidate.every(allowed) &&
+          new Set(candidate).size === actions.length
+        )
+          this.values = Object.fromEntries(
+            actions.map((action, i) => [action.id, candidate[i]]),
+          );
+      }
+    }
+    snapshot() {
+      return { ...this.values };
+    }
+    label(id) {
+      return label(this.values[id] || "");
+    }
+    resolve(code) {
+      const action = actions.find((action) => this.values[action.id] === code);
+      return action?.canonical || aliases[code] || null;
+    }
+    sync(keys, pressed) {
+      for (const action of actions) keys[action.canonical] = false;
+      for (const physical of pressed) {
+        const logical = this.resolve(physical);
+        if (logical) keys[logical] = true;
+      }
+    }
+    bind(id, code) {
+      if (!actions.some((action) => action.id === id) || !allowed(code))
+        return {
+          ok: false,
+          message: "Escolha uma tecla simples. Esc fica reservado para o menu.",
+        };
+      const conflict = actions.find(
+        (action) => action.id !== id && this.values[action.id] === code,
+      );
+      if (conflict)
+        return {
+          ok: false,
+          message: `${label(code)} já está em “${conflict.label}”. Escolha outra tecla.`,
+        };
+      this.values[id] = code;
+      return { ok: true };
+    }
+    reset() {
+      this.values = { ...defaults };
+    }
+  }
+  return { actions, Bindings, label };
+})();
+
+</script>
+    <script>
+window.ArenaControlsUI = (() => {
+  "use strict";
+  function init(bindings, onChange) {
+    const list = document.getElementById("keybindingsList"),
+      status = document.getElementById("bindingStatus");
+    const buttons = new Map();
+    let capturing = null;
+    function refresh() {
+      for (const [id, button] of buttons) {
+        button.textContent =
+          capturing === id ? "Pressione…" : bindings.label(id);
+        button.classList.toggle("capturing", capturing === id);
+        button.setAttribute(
+          "aria-label",
+          `Alterar tecla: ${ArenaControls.actions.find((action) => action.id === id).label}, ${bindings.label(id)}`,
+        );
+      }
+    }
+    function cancel() {
+      capturing = null;
+      status.textContent =
+        "Clique numa tecla para alterar. Esc sempre abre o menu.";
+      refresh();
+    }
+    for (const group of [
+      ...new Set(ArenaControls.actions.map((action) => action.group)),
+    ]) {
+      const section = document.createElement("details");
+      section.open = group === "Movimento";
+      const title = document.createElement("summary");
+      title.textContent = group;
+      section.append(title);
+      const grid = document.createElement("div");
+      grid.className = "binding-grid";
+      section.append(grid);
+      for (const action of ArenaControls.actions.filter(
+        (action) => action.group === group,
+      )) {
+        const row = document.createElement("div"),
+          text = document.createElement("span"),
+          button = document.createElement("button");
+        row.className = "binding-row";
+        text.textContent = action.label;
+        button.type = "button";
+        button.className = "binding-key";
+        button.dataset.action = action.id;
+        button.onclick = () => {
+          capturing = action.id;
+          status.textContent = `Pressione a nova tecla para “${action.label}”. Esc cancela.`;
+          refresh();
+        };
+        buttons.set(action.id, button);
+        row.append(text, button);
+        grid.append(row);
+      }
+      list.append(section);
+    }
+    window.addEventListener(
+      "keydown",
+      (event) => {
+        if (
+          !capturing ||
+          document.getElementById("controlsModal").classList.contains("hidden")
+        )
+          return;
+        if (event.code === "Tab") {
+          cancel();
+          return;
+        }
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        if (event.repeat) return;
+        if (event.code === "Escape") {
+          cancel();
+          return;
+        }
+        const result = bindings.bind(capturing, event.code);
+        if (!result.ok) {
+          status.textContent = result.message;
+          return;
+        }
+        const action = capturing;
+        capturing = null;
+        onChange();
+        refresh();
+        buttons.get(action).focus();
+        status.textContent = "Tecla salva neste navegador.";
+      },
+      true,
+    );
+    document.getElementById("btnResetBindings").onclick = () => {
+      bindings.reset();
+      cancel();
+      onChange();
+      status.textContent = "Teclas padrão restauradas.";
+    };
+    cancel();
+    return { cancel, refresh };
+  }
+  return { init };
+})();
+
+</script>
+    <script>
 /* Procedural block avatars. Silhouette and hitboxes do not depend on accessories. */
 window.ArenaAvatars = (() => {
   "use strict";
@@ -2342,8 +2729,9 @@ window.ArenaAvatars = (() => {
     const shared = ArenaRuntime.shared;
     if (!geometries)
       geometries = {
-        leg: shared(new THREE.BoxGeometry(0.32, 0.76, 0.36)),
-        arm: shared(new THREE.BoxGeometry(0.27, 0.61, 0.34)),
+        leg: shared(new THREE.BoxGeometry(0.32, 0.36, 0.36)),
+        upperArm: shared(new THREE.BoxGeometry(0.27, 0.3, 0.34)),
+        forearm: shared(new THREE.BoxGeometry(0.25, 0.28, 0.32)),
         torso: shared(new THREE.BoxGeometry(0.7, 0.65, 0.4)),
         head: shared(new THREE.BoxGeometry(0.45, 0.43, 0.43)),
         shoe: shared(new THREE.BoxGeometry(0.34, 0.15, 0.42)),
@@ -2365,8 +2753,10 @@ window.ArenaAvatars = (() => {
       darkMat = mat(0x142036),
       shoeMat = mat(0xf3f0e7);
     const root = new THREE.Group(),
-      bodyPivot = new THREE.Group();
+      bodyPivot = new THREE.Group(),
+      posePivot = new THREE.Group();
     root.add(bodyPivot);
+    bodyPivot.add(posePivot);
     const mesh = (geo, material, x = 0, y = 0, z = 0) => {
       const item = new THREE.Mesh(geo, material);
       item.position.set(x, y, z);
@@ -2378,18 +2768,36 @@ window.ArenaAvatars = (() => {
       const p = new THREE.Group();
       p.position.set(x, y, 0);
       p.add(mesh(geo, material, 0, cy));
-      bodyPivot.add(p);
+      posePivot.add(p);
       return p;
     };
-    const leftLegPivot = pivot(-0.19, 0.8, geometries.leg, pants, -0.38);
-    const rightLegPivot = pivot(0.19, 0.8, geometries.leg, pants, -0.38);
-    for (const leg of [leftLegPivot, rightLegPivot])
-      leg.add(mesh(geometries.shoe, shoeMat, 0, -0.72, -0.025));
-    const leftArmPivot = pivot(-0.5, 1.44, geometries.arm, armMat, -0.265);
-    const rightArmPivot = pivot(0.5, 1.44, geometries.arm, armMat, -0.265);
-    for (const arm of [leftArmPivot, rightArmPivot])
-      arm.add(mesh(geometries.hand, skinMat, 0, -0.57));
-    bodyPivot.add(mesh(geometries.torso, torsoMat, 0, 1.14));
+    const leftLegPivot = pivot(-0.19, 0.8, geometries.leg, pants, -0.18);
+    const rightLegPivot = pivot(0.19, 0.8, geometries.leg, pants, -0.18);
+    const knees = [leftLegPivot, rightLegPivot].map((leg) => {
+      const knee = new THREE.Group();
+      knee.position.y = -0.36;
+      knee.add(
+        mesh(geometries.leg, pants, 0, -0.18),
+        mesh(geometries.shoe, shoeMat, 0, -0.36, -0.025),
+      );
+      leg.add(knee);
+      return knee;
+    });
+    const [leftKneePivot, rightKneePivot] = knees;
+    const leftArmPivot = pivot(-0.5, 1.44, geometries.upperArm, armMat, -0.12);
+    const rightArmPivot = pivot(0.5, 1.44, geometries.upperArm, armMat, -0.12);
+    const elbows = [leftArmPivot, rightArmPivot].map((arm) => {
+      const elbow = new THREE.Group();
+      elbow.position.y = -0.27;
+      elbow.add(
+        mesh(geometries.forearm, armMat, 0, -0.14),
+        mesh(geometries.hand, skinMat, 0, -0.3),
+      );
+      arm.add(elbow);
+      return elbow;
+    });
+    const [leftElbowPivot, rightElbowPivot] = elbows;
+    posePivot.add(mesh(geometries.torso, torsoMat, 0, 1.14));
     const chestStripe = mesh(
       new THREE.BoxGeometry(0.39, 0.055, 0.012),
       shoeMat,
@@ -2397,14 +2805,14 @@ window.ArenaAvatars = (() => {
       1.25,
       -0.207,
     );
-    bodyPivot.add(chestStripe);
+    posePivot.add(chestStripe);
     if (opts.backpack)
-      bodyPivot.add(
+      posePivot.add(
         mesh(new THREE.BoxGeometry(0.44, 0.43, 0.18), darkMat, 0, 1.15, 0.29),
       );
     const headGroup = new THREE.Group();
     headGroup.position.y = 1.69;
-    bodyPivot.add(headGroup);
+    posePivot.add(headGroup);
     headGroup.add(mesh(geometries.head, skinMat));
     headGroup.add(mesh(geometries.hair, hairMat, 0, 0.19, 0.015));
     headGroup.add(
@@ -2419,7 +2827,8 @@ window.ArenaAvatars = (() => {
     );
     headGroup.add(helmet);
     const gunHolder = new THREE.Group();
-    gunHolder.position.set(0, -0.48, -0.22);
+    gunHolder.position.set(0, -0.3, -0.06);
+    gunHolder.rotation.x = -Math.PI / 2;
     const currentGun = buildWeaponModel(
       opts.weaponKey || "mp40",
       opts.evoSkin || "padrao",
@@ -2441,7 +2850,8 @@ window.ArenaAvatars = (() => {
     leftGunHolder.position.copy(gunHolder.position);
     leftGunHolder.add(buildWeaponModel("vector", opts.evoSkin || "padrao"));
     leftGunHolder.visible = false;
-    leftArmPivot.add(leftGunHolder);
+    leftGunHolder.rotation.x = -Math.PI / 2;
+    leftElbowPivot.add(leftGunHolder);
     const leftMuzzlePoint = new THREE.Object3D();
     leftMuzzlePoint.position.copy(muzzlePoint.position);
     leftGunHolder.add(leftMuzzlePoint);
@@ -2454,10 +2864,16 @@ window.ArenaAvatars = (() => {
     );
     flagGroup.position.set(0, -0.35, -0.1);
     flagGroup.visible = false;
-    rightArmPivot.add(gunHolder, flagGroup);
+    rightElbowPivot.add(gunHolder);
+    rightArmPivot.add(flagGroup);
     return {
       root,
       bodyPivot,
+      posePivot,
+      leftKneePivot,
+      rightKneePivot,
+      leftElbowPivot,
+      rightElbowPivot,
       headGroup,
       helmet,
       hatMat,
@@ -2478,6 +2894,122 @@ window.ArenaAvatars = (() => {
     };
   }
   return { create };
+})();
+
+</script>
+    <script>
+/* Secondary animation is cosmetic: hitboxes remain on the unanimated body pivot. */
+window.ArenaMotion = (() => {
+  "use strict";
+  const motions = new WeakMap();
+  function reset(character) {
+    motions.delete(character);
+    character.posePivot.position.set(0, 0, 0);
+    character.posePivot.rotation.set(0, 0, 0);
+  }
+  function pose(character, dt, options = {}) {
+    let motion = motions.get(character);
+    if (!motion) {
+      motion = {
+        previous: character.root.position.clone(),
+        grounded: options.grounded !== false,
+        landing: 0,
+        phase: 0,
+        rootQ: new THREE.Quaternion(),
+        parentQ: new THREE.Quaternion(),
+        targetQ: new THREE.Quaternion(),
+        euler: new THREE.Euler(),
+      };
+      motions.set(character, motion);
+    }
+    const position = character.root.position,
+      dx = position.x - motion.previous.x,
+      dz = position.z - motion.previous.z;
+    const speed = Math.min(10, Math.hypot(dx, dz) / Math.max(dt, 0.0001));
+    motion.previous.copy(position);
+    const grounded = options.grounded !== false,
+      moving = speed > 0.2 && !options.riding;
+    const aiming = !!options.aiming && !options.emoting && !options.riding,
+      alpha = 1 - Math.exp(-14 * dt);
+    motion.phase += dt * (moving ? (speed > 7 ? 13 : 9) : 2);
+    if (!motion.grounded && grounded) motion.landing = 0.1;
+    motion.grounded = grounded;
+    motion.landing *= Math.exp(-12 * dt);
+    const smooth = (object, axis, target) => {
+      object.rotation[axis] += (target - object.rotation[axis]) * alpha;
+    };
+    const phase = options.walkTime ?? motion.phase;
+    const knee = (offset) =>
+      options.riding
+        ? -0.9
+        : !grounded
+          ? -0.65
+          : -(moving ? Math.max(0, -Math.sin(phase + offset)) * 0.75 : 0.04) -
+            motion.landing * 2;
+    smooth(character.leftKneePivot, "x", knee(0));
+    smooth(character.rightKneePivot, "x", knee(Math.PI));
+    smooth(
+      character.rightElbowPivot,
+      "x",
+      options.reloading
+        ? -0.95
+        : aiming
+          ? -0.3
+          : options.emoting
+            ? -0.45
+            : -0.12,
+    );
+    smooth(
+      character.leftElbowPivot,
+      "x",
+      options.reloading
+        ? -1.15
+        : aiming && !options.akimbo
+          ? -0.55
+          : aiming
+            ? -0.3
+            : -0.15,
+    );
+    smooth(character.rightArmPivot, "y", 0);
+    smooth(character.leftArmPivot, "y", 0);
+    smooth(character.rightArmPivot, "z", aiming && !options.akimbo ? -1.1 : 0);
+    smooth(character.leftArmPivot, "z", aiming && !options.akimbo ? 1.0 : 0);
+    smooth(
+      character.headGroup,
+      "x",
+      Math.max(-0.35, Math.min(0.35, (options.pitch || 0) * 0.65)),
+    );
+    smooth(
+      character.posePivot,
+      "x",
+      options.riding ? 0 : speed > 7 ? -0.065 : 0,
+    );
+    smooth(character.posePivot, "z", moving ? Math.sin(phase) * 0.018 : 0);
+    character.posePivot.position.y =
+      (grounded && moving
+        ? Math.abs(Math.sin(phase)) * 0.023
+        : Math.sin(motion.phase) * 0.006) - motion.landing;
+    // Keep the barrel aligned with the aim even while elbows and shoulders bend.
+    character.root.getWorldQuaternion(motion.rootQ);
+    const pitch = aiming
+      ? options.pitch || 0
+      : options.reloading
+        ? -0.6
+        : -0.32;
+    motion.euler.set(
+      pitch,
+      0,
+      options.reloading ? Math.sin(motion.phase * 3) * 0.14 : 0,
+    );
+    motion.targetQ
+      .copy(motion.rootQ)
+      .multiply(motion.parentQ.setFromEuler(motion.euler));
+    for (const holder of [character.gunHolder, character.leftGunHolder]) {
+      holder.parent.getWorldQuaternion(motion.parentQ);
+      holder.quaternion.copy(motion.parentQ.invert().multiply(motion.targetQ));
+    }
+  }
+  return { pose, reset };
 })();
 
 </script>
@@ -2507,6 +3039,8 @@ window.ArenaUI = (() => {
     createCharacter,
     applyQuality,
     persistSave,
+    bindings,
+    onBindingsChanged,
     pauseGame,
     resumeGame,
     restartGame,
@@ -2613,14 +3147,29 @@ window.ArenaUI = (() => {
     $("btnResume").onclick = resumeGame;
     $("btnRestart").onclick = restartGame;
     $("btnExitLobby").onclick = leaveGame;
+    function refreshHints() {
+      for (const item of document.querySelectorAll("[data-binding-group]"))
+        item.textContent = item.dataset.bindingGroup
+          .split(",")
+          .map((id) => bindings.label(id))
+          .join(" ");
+    }
+    const keyEditor = ArenaControlsUI.init(bindings, () => {
+      onBindingsChanged();
+      refreshHints();
+    });
+    refreshHints();
     let controlsTrigger;
     function controls(event) {
       controlsTrigger = event.currentTarget;
+      keyEditor.cancel();
       $("controlsModal").classList.remove("hidden");
-      $("btnCloseControls").focus();
+      $("btnResetBindings").focus({ preventScroll: true });
+      $("controlsModal").querySelector(".modal").scrollTop = 0;
     }
     $("btnControlsLobby").onclick = $("btnControlsPause").onclick = controls;
     $("btnCloseControls").onclick = () => {
+      keyEditor.cancel();
       $("controlsModal").classList.add("hidden");
       controlsTrigger?.focus();
     };
@@ -2919,6 +3468,8 @@ window.ArenaUI = (() => {
     ["quality", ["low", "medium", "high"], "medium"],
   ])
     saved[key] = R.choice(saved[key], options, fallback);
+  const bindings = new ArenaControls.Bindings(saved.keyBindings);
+  const keyHint = (id) => bindings.label(id);
   const statsTotal = {
     kills: saved.totalKills || 0,
     capas: saved.totalCapas || 0,
@@ -2997,6 +3548,7 @@ window.ArenaUI = (() => {
       hatStyle: state.hatStyle,
       hatColor: state.hatColor,
       quality: state.quality,
+      keyBindings: bindings.snapshot(),
     });
     if (!stored && !persistSave.warned) {
       persistSave.warned = true;
@@ -4285,12 +4837,15 @@ window.ArenaUI = (() => {
     },
   };
 
+  const magazines = new ArenaCombat.Magazines(WEAPONS);
   const slotsBox = $("weaponSlots");
   WEAPON_ORDER.forEach((k, i) => {
     const d = document.createElement("div");
     d.className = "slot" + (k === "mp40" ? " active" : "");
     d.dataset.w = k;
-    d.innerHTML = `<b>${k === "vector" ? "Y" : i === 9 ? 0 : i + 1} • ${WEAPONS[k].short}</b><small>${WEAPONS[k].sub}</small>`;
+    d.dataset.action =
+      k === "vector" ? "weaponVector" : "weapon" + ((i + 1) % 10);
+    d.innerHTML = `<b>${keyHint(d.dataset.action)} • ${WEAPONS[k].short}</b><small>${WEAPONS[k].sub.replace(" [Y]", "")}</small>`;
     d.onclick = () => selectWeapon(k);
     slotsBox.appendChild(d);
   });
@@ -4316,10 +4871,10 @@ window.ArenaUI = (() => {
     curShoulder: 1,
     weaponKey: "mp40",
     prevWeaponKey: "katana",
-    ammo: 28,
     reloading: false,
     reloadEnd: 0,
     isFiring: false,
+    fireQueued: false,
     isScoped: false,
     firePressedAt: 0,
     scopePressedAt: 0,
@@ -4371,6 +4926,12 @@ window.ArenaUI = (() => {
     roundOver: false,
     outOfZone: false,
   };
+
+  Object.defineProperty(state, "ammo", {
+    enumerable: true,
+    get: () => magazines.read(state.weaponKey),
+    set: (value) => magazines.write(state.weaponKey, value),
+  });
 
   [
     ["sens", "Sens. Geral", 0.3, 2.5],
@@ -4570,7 +5131,7 @@ window.ArenaUI = (() => {
       return;
     state.prevWeaponKey = state.weaponKey;
     state.weaponKey = key;
-    state.ammo = WEAPONS[key].mag;
+    state.reloadEnd = 0;
     state.reloading = false;
     if (WEAPONS[key].melee) state.isScoped = false;
     refreshWeaponSlotLocks();
@@ -5374,6 +5935,7 @@ window.ArenaUI = (() => {
   };
 
   function clearArenaEntities() {
+    state.fireQueued = false;
     clock.clear();
     grenades.forEach((g) => disposeObject(g.mesh));
     grenades.length = 0;
@@ -5400,6 +5962,7 @@ window.ArenaUI = (() => {
     lastGelTime = -10000;
     lastNetSend = 0;
     lastZoneTick = 0;
+    pressedKeys.clear();
     for (const key in keys) keys[key] = false;
     for (let i = glooWalls.length - 1; i >= 0; i--) {
       disposeObject(glooWalls[i].mesh);
@@ -5432,6 +5995,8 @@ window.ArenaUI = (() => {
     resetBarrels();
   }
   function resetPlayerStats(xPos, yPos, zPos) {
+    magazines.reset();
+    ArenaMotion.reset(playerChar);
     playerChar.bodyPivot.position.y = 0;
     player.dashUntil = 0;
     state.reloading = false;
@@ -5483,6 +6048,7 @@ window.ArenaUI = (() => {
     updateHpUI();
   }
   function startMatch() {
+    magazines.reset();
     if (state.mode === "x1" && !(conn && conn.open)) {
       ArenaUI.notice(
         "Crie ou entre em uma sala e aguarde a conexão com seu amigo.",
@@ -5734,7 +6300,8 @@ window.ArenaUI = (() => {
   $("btnReadyCS").onclick = startCSRound;
 
   // CONTROLES PC
-  const keys = {};
+  const keys = {},
+    pressedKeys = new Set();
   let isLocked = false,
     wasLocked = false,
     lastMouseX = null,
@@ -5769,6 +6336,8 @@ window.ArenaUI = (() => {
     );
   }
   function releaseInputs() {
+    state.fireQueued = false;
+    pressedKeys.clear();
     for (const key in keys) keys[key] = false;
     state.isFiring = false;
     state.isScoped = false;
@@ -5855,6 +6424,7 @@ window.ArenaUI = (() => {
     }
     if (player.inVehicle || player.parachuting || player.onZipline) return;
     if (e.button === 0) {
+      state.fireQueued = true;
       state.isFiring = true;
       state.firePressedAt = clock.now;
       player.healing = false;
@@ -5974,10 +6544,13 @@ window.ArenaUI = (() => {
   addEventListener("keydown", (e) => {
     if (e.target.closest('input,select,textarea,[contenteditable="true"]'))
       return;
-    if (["Escape", "KeyP", "KeyH"].includes(e.code) && state.started) {
+    if (!$("controlsModal").classList.contains("hidden")) return;
+    const code = e.code === "Escape" ? "Escape" : bindings.resolve(e.code);
+    if (!code) return;
+    if (["Escape", "KeyP", "KeyH"].includes(code) && state.started) {
       e.preventDefault();
       if (!e.repeat) {
-        if (state.paused && e.code !== "KeyH") resumeGame();
+        if (state.paused && code !== "KeyH") resumeGame();
         else pauseGame();
       }
       return;
@@ -5985,26 +6558,27 @@ window.ArenaUI = (() => {
     if (!isPlaying()) return;
     if (
       /^(Key[A-Z]|Digit[0-9]|Arrow(Up|Down|Left|Right)|Space|Shift(Left|Right)|ControlLeft)$/.test(
-        e.code,
+        code,
       )
     )
       e.preventDefault();
     if (
       e.repeat &&
-      ["KeyC", "ControlLeft", "KeyU", "KeyB", "KeyT"].includes(e.code)
+      ["KeyC", "ControlLeft", "KeyU", "KeyB", "KeyT"].includes(code)
     )
       return;
-    if (e.code === "AltLeft" || e.code === "AltRight") {
+    if (code === "AltLeft" || code === "AltRight") {
       e.preventDefault();
       if (isPlaying() && !player.freeLook) {
         player.freeLook = true;
         player.lockedMoveYaw = state.camYaw;
       }
     }
-    keys[e.code] = true;
+    pressedKeys.add(e.code);
+    bindings.sync(keys, pressedKeys);
 
     if (!isPlaying()) return;
-    if (e.code === "Enter" && !player.dead && !player.parachuting) {
+    if (code === "Enter" && !player.dead && !player.parachuting) {
       if (player.inVehicle) {
         exitBuggySafely();
         return;
@@ -6035,22 +6609,23 @@ window.ArenaUI = (() => {
         }
       }
     }
-    if (player.onZipline && e.code === "Space") {
+    if (player.onZipline && code === "Space") {
       player.onZipline = false;
       player.velY = 4.5;
       player.onGround = false;
       return;
     }
     if (player.inVehicle || player.parachuting || player.onZipline) return;
-    if (e.code === "KeyF") {
+    if (code === "KeyF") {
+      state.fireQueued = true;
       initAudio();
       if (!state.isFiring) state.firePressedAt = clock.now;
       state.isFiring = true;
       player.healing = false;
       player.emoteUntil = 0;
     }
-    if (e.code === "KeyU") state.shoulderSide *= -1;
-    if (e.code === "KeyK") activateUAV(clock.now);
+    if (code === "KeyU") state.shoulderSide *= -1;
+    if (code === "KeyK") activateUAV(clock.now);
     const wKeys = {
       Digit1: "mp40",
       Digit2: "scar",
@@ -6064,18 +6639,18 @@ window.ArenaUI = (() => {
       Digit0: "katana",
       KeyY: "vector",
     };
-    if (wKeys[e.code]) selectWeapon(wKeys[e.code]);
-    if (e.code === "KeyQ") selectWeapon(state.prevWeaponKey);
-    if (e.code === "KeyR") startReload();
-    if (e.code === "KeyG") playerUseGel(clock.now, false);
-    if (e.code === "KeyV") playerUseGel(clock.now, true);
-    if (e.code === "KeyE") startMedkit(clock.now);
-    if (e.code === "KeyI") useInhaler();
-    if (e.code === "KeyM")
+    if (wKeys[code]) selectWeapon(wKeys[code]);
+    if (code === "KeyQ") selectWeapon(state.prevWeaponKey);
+    if (code === "KeyR") startReload();
+    if (code === "KeyG") playerUseGel(clock.now, false);
+    if (code === "KeyV") playerUseGel(clock.now, true);
+    if (code === "KeyE") startMedkit(clock.now);
+    if (code === "KeyI") useInhaler();
+    if (code === "KeyM")
       plantLandmine(player.pos.x, player.pos.y, player.pos.z, clock.now, false);
-    if (e.code === "KeyX") throwSmoke(clock.now);
-    if (e.code === "KeyZ") activateSkill(clock.now);
-    if (e.code === "KeyB" && !player.dead) {
+    if (code === "KeyX") throwSmoke(clock.now);
+    if (code === "KeyZ") activateSkill(clock.now);
+    if (code === "KeyB" && !player.dead) {
       player.emoteUntil = clock.now + 2200;
       playSkillSound();
       spawnSparks(
@@ -6085,30 +6660,33 @@ window.ArenaUI = (() => {
       );
     }
     if (
-      e.code === "KeyT" &&
+      code === "KeyT" &&
       (state.customRoom || player.nades > 0) &&
       !player.dead
     )
       player.aimingNade = true;
-    if (e.code === "KeyC" || e.code === "ControlLeft")
+    if (code === "KeyC" || code === "ControlLeft")
       player.crouching = !player.crouching;
-    if (e.code === "Space" && player.onGround && !player.dead) {
+    if (code === "Space" && player.onGround && !player.dead) {
       player.crouching = false;
       player.velY = 7.4;
       player.onGround = false;
     }
   });
   addEventListener("keyup", (e) => {
-    if (e.code === "AltLeft" || e.code === "AltRight") {
+    const code = bindings.resolve(e.code);
+    pressedKeys.delete(e.code);
+    bindings.sync(keys, pressedKeys);
+    if (!code) return;
+    if (code === "AltLeft" || code === "AltRight") {
       if (player.freeLook) {
         player.freeLook = false;
         state.camYaw = player.lockedMoveYaw;
       }
     }
-    keys[e.code] = false;
     if (!isPlaying()) return;
-    if (e.code === "KeyF") state.isFiring = false;
-    if (e.code === "KeyT" && player.aimingNade) {
+    if (code === "KeyF") state.isFiring = false;
+    if (code === "KeyT" && player.aimingNade) {
       player.aimingNade = false;
       throwGrenade(clock.now);
     }
@@ -7247,7 +7825,7 @@ window.ArenaUI = (() => {
       playerChar.leftArmPivot.rotation.x = 2.8;
       playerChar.rightArmPivot.rotation.x = 2.8;
       vehiclePrompt.style.display = "block";
-      vehiclePrompt.textContent = "[ESPAÇO] Soltar da Tirolesa";
+      vehiclePrompt.textContent = `[${keyHint("jump")}] Soltar da Tirolesa`;
       $("uiState").textContent = "TIROLESA";
       if (player.zipT >= 1) {
         player.onZipline = false;
@@ -7383,7 +7961,7 @@ window.ArenaUI = (() => {
         }
       }
       vehiclePrompt.style.display = "block";
-      vehiclePrompt.textContent = `[ENTER] Sair do Buggy • ${Math.abs(Math.round(buggy.speed * 5))} km/h`;
+      vehiclePrompt.textContent = `[${keyHint("interact")}] Sair do Buggy • ${Math.abs(Math.round(buggy.speed * 5))} km/h`;
       $("uiState").textContent = "DIRIGINDO";
       return;
     }
@@ -7393,13 +7971,13 @@ window.ArenaUI = (() => {
       player.pos.distanceTo(zipAnchorB) < 2.6;
     if (nearZip) {
       vehiclePrompt.style.display = "block";
-      vehiclePrompt.textContent = "Pressione [ENTER] para pegar a Tirolesa";
+      vehiclePrompt.textContent = `Pressione [${keyHint("interact")}] para pegar a Tirolesa`;
     } else if (
       (state.mode === "treino" || state.mode === "br") &&
       player.pos.distanceTo(buggy.pos) < 3.6
     ) {
       vehiclePrompt.style.display = "block";
-      vehiclePrompt.textContent = "Pressione [ENTER] para dirigir o Buggy";
+      vehiclePrompt.textContent = `Pressione [${keyHint("interact")}] para dirigir o Buggy`;
     } else vehiclePrompt.style.display = "none";
 
     if (player.healing && now >= player.healEnd) {
@@ -7538,7 +8116,7 @@ window.ArenaUI = (() => {
     }
 
     state.gunKick = Math.max(0, state.gunKick - 1.1 * dt);
-    playerChar.gunHolder.position.z = -0.22 + state.gunKick;
+    playerChar.gunHolder.position.z = -0.06 + state.gunKick;
     const emoting = now < player.emoteUntil;
     playerChar.flagGroup.visible = emoting;
     playerChar.currentGun.visible = !emoting;
@@ -7611,7 +8189,7 @@ window.ArenaUI = (() => {
     if (now - lastHudAt > 100) {
       lastHudAt = now;
       $("uiState").textContent = player.freeLook
-        ? "OLHINHO (ALT)"
+        ? `OLHAR LIVRE (${keyHint("freeLook")})`
         : emoting
           ? "BANDEIRÃO!"
           : player.healing
@@ -7624,31 +8202,38 @@ window.ArenaUI = (() => {
                   ? "CORRENDO"
                   : "EM PÉ";
       const inf = state.customRoom || state.mode === "treino";
-      $("uiGel").textContent = `Gel [G/V]: ${inf ? "∞" : player.gels}`;
-      $("uiKit").textContent = `Kit [E]: ${inf ? "∞" : player.kits}`;
-      $("uiInal").textContent = `Inal. [I]: ${inf ? "∞" : player.inhalers}`;
-      $("uiNade").textContent = `Gran. [T]: ${inf ? "∞" : player.nades}`;
-      $("uiMine").textContent = `Mina [M]: ${inf ? "∞" : player.mines}`;
-      $("uiSmoke").textContent = `Fum. [X]: ${inf ? "∞" : player.smokes}`;
+      $("uiGel").textContent =
+        `Gel [${keyHint("gel")}/${keyHint("crouchGel")}]: ${inf ? "∞" : player.gels}`;
+      $("uiKit").textContent =
+        `Kit [${keyHint("medkit")}]: ${inf ? "∞" : player.kits}`;
+      $("uiInal").textContent =
+        `Inal. [${keyHint("inhaler")}]: ${inf ? "∞" : player.inhalers}`;
+      $("uiNade").textContent =
+        `Gran. [${keyHint("grenade")}]: ${inf ? "∞" : player.nades}`;
+      $("uiMine").textContent =
+        `Mina [${keyHint("mine")}]: ${inf ? "∞" : player.mines}`;
+      $("uiSmoke").textContent =
+        `Fum. [${keyHint("smoke")}]: ${inf ? "∞" : player.smokes}`;
       if (state.skill === "tatsuya")
-        $("uiSkill").textContent = `[Z] Tatsuya: ${player.tatsuyaCharges}/2`;
+        $("uiSkill").textContent =
+          `[${keyHint("skill")}] Tatsuya: ${player.tatsuyaCharges}/2`;
       else {
         const cd = Math.max(0, Math.ceil((player.skillCdUntil - now) / 1000)),
           lb = state.skill === "alok" ? "Alok" : "Chrono";
         $("uiSkill").textContent =
           now < player.skillActiveUntil
-            ? `[Z] ${lb}: ATIVO`
+            ? `[${keyHint("skill")}] ${lb}: ATIVO`
             : cd > 0
-              ? `[Z] ${lb}: ${cd}s`
-              : `[Z] ${lb}: Pronto`;
+              ? `[${keyHint("skill")}] ${lb}: ${cd}s`
+              : `[${keyHint("skill")}] ${lb}: Pronto`;
       }
       const ur = Math.max(0, Math.ceil((player.uavCdUntil - now) / 1000));
       $("uiUav").textContent =
         now < player.uavActiveUntil
-          ? `[K] VANT: ATIVO`
+          ? `[${keyHint("uav")}] VANT: ATIVO`
           : ur > 0
-            ? `[K] VANT: ${ur}s`
-            : `[K] VANT: Pronto`;
+            ? `[${keyHint("uav")}] VANT: ${ur}s`
+            : `[${keyHint("uav")}] VANT: Pronto`;
     }
   }
 
@@ -7687,30 +8272,44 @@ window.ArenaUI = (() => {
     createCharacter,
     applyQuality,
     persistSave,
+    bindings,
+    onBindingsChanged: () => {
+      releaseInputs();
+      persistSave();
+      lastHudAt = 0;
+      refreshWeaponSlotLocks();
+      for (const slot of weaponSlots)
+        slot.querySelector("b").textContent =
+          `${keyHint(slot.dataset.action)} • ${WEAPONS[slot.dataset.w].short}`;
+    },
     pauseGame,
     resumeGame,
     restartGame,
     leaveGame,
   });
   ui.lobby();
-  let lastTime = clock.now;
   function animate(realNow) {
     requestAnimationFrame(animate);
-    const dt = clock.advance(realNow, isSimulating()),
-      now = clock.now;
-    if (!dt) {
+    if (!isSimulating()) {
+      clock.advance(realNow, false);
       fpsFrames = 0;
       fpsStart = realNow;
       ui.renderPreview();
       return;
     }
+    const dt = clock.advance(realNow, true, simulate),
+      now = clock.now;
     fpsFrames++;
     if (realNow - fpsStart >= 1000) {
       perf.textContent = `${Math.round((fpsFrames * 1000) / (realNow - fpsStart))} FPS · ${R.presets[state.quality].label}`;
       fpsFrames = 0;
       fpsStart = realNow;
     }
-    lastTime = now;
+    renderer.render(scene, camera);
+    draw2DOverlay(now, dt);
+  }
+  function simulate(dt, now) {
+    if (!isSimulating()) return false;
     if (state.timeOfDay === "chuva") {
       const rp = rainGeo.attributes.position.array;
       for (let i = 0; i < rainCount; i++) {
@@ -7927,7 +8526,15 @@ window.ArenaUI = (() => {
         }
         continue;
       }
-      if (isPlaying()) updateBotAI(e, dt, now);
+      if (isPlaying()) {
+        updateBotAI(e, dt, now);
+        ArenaMotion.pose(e.char, dt, {
+          grounded: true,
+          walkTime: e.walkTime,
+          aiming: state.botsShoot,
+          pitch: 0,
+        });
+      }
     }
 
     if (state.mode === "x1" && remotePlayer.alive) {
@@ -7966,6 +8573,14 @@ window.ArenaUI = (() => {
           remoteChar.root.position.y + 1.15,
           remoteChar.root.position.z,
         );
+      ArenaMotion.pose(remoteChar, dt, {
+        grounded: true,
+        walkTime: remotePlayer.walkTime,
+        aiming: remotePlayer.aimPitch > -50,
+        pitch: remotePlayer.aimPitch > -50 ? remotePlayer.aimPitch : 0,
+        akimbo: remotePlayer.weapon === "vector",
+        emoting: remotePlayer.emote,
+      });
       remoteChar.flagGroup.visible = remotePlayer.emote;
       remoteChar.currentGun.visible = !remotePlayer.emote;
       if (remotePlayer.emote)
@@ -7984,8 +8599,22 @@ window.ArenaUI = (() => {
       updatePlayer(dt, now);
       updateCamera(dt);
       updateAimAssist(dt, now);
-      updateCamera(dt);
-      if (state.isFiring) fireWeapon(now);
+      updateCamera(0);
+      ArenaMotion.pose(playerChar, dt, {
+        grounded: player.onGround,
+        pitch: state.camPitch,
+        walkTime: player.walkTime,
+        aiming: state.isScoped || state.isFiring,
+        reloading: state.reloading,
+        akimbo: !!WEAPONS[state.weaponKey].akimbo,
+        emoting: now < player.emoteUntil,
+        riding: player.inVehicle || player.onZipline || player.parachuting,
+      });
+      scene.updateMatrixWorld(true);
+      if (state.isFiring || state.fireQueued) {
+        fireWeapon(now);
+        state.fireQueued = false;
+      }
     } else updateCamera(dt);
     for (let i = tracers3d.length - 1; i >= 0; i--) {
       const t = tracers3d[i];
@@ -8020,8 +8649,7 @@ window.ArenaUI = (() => {
         particles3d.splice(i, 1);
       }
     }
-    renderer.render(scene, camera);
-    draw2DOverlay(now, dt);
+    return isSimulating();
   }
 
   // OVERLAY 2D

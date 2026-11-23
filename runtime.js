@@ -33,19 +33,35 @@ window.ArenaRuntime = (() => {
       this.lastReal = performance.now();
       this.tasks = new Map();
       this.nextId = 0;
+      this.accumulator = 0;
+      this.step = 1 / 60;
     }
-    advance(real, active) {
-      const dt = Math.max(0, Math.min(0.05, (real - this.lastReal) / 1000));
+    advance(real, active, update = () => {}) {
+      const elapsed = Math.max(0, (real - this.lastReal) / 1000);
       this.lastReal = real;
-      if (!active) return 0;
-      this.now += dt * 1000;
-      for (const [id, task] of [...this.tasks]) {
-        if (this.tasks.has(id) && task.at <= this.now) {
-          this.tasks.delete(id);
-          task.fn();
+      if (!active) {
+        this.accumulator = 0;
+        return 0;
+      }
+      this.accumulator += elapsed;
+      let steps = 0;
+      // Bound work per render, retaining the backlog instead of slowing down time.
+      while (this.accumulator + 1e-9 >= this.step && steps < 120) {
+        this.accumulator = Math.max(0, this.accumulator - this.step);
+        this.now += this.step * 1000;
+        steps++;
+        for (const [id, task] of [...this.tasks]) {
+          if (this.tasks.has(id) && task.at <= this.now + 1e-7) {
+            this.tasks.delete(id);
+            task.fn();
+          }
+        }
+        if (update(this.step, this.now) === false) {
+          this.accumulator = 0;
+          break;
         }
       }
-      return dt;
+      return steps * this.step;
     }
     schedule(fn, ms) {
       const id = ++this.nextId;
