@@ -84,6 +84,13 @@ function passed(name, data) {
     await fresh(() => localStorage.setItem("ff_web_apex2_v1", "{broken-json"));
     assert.equal(await page.locator(".mode-btn").count(), 6);
     passed("Inicialização com JSON corrompido");
+    await page.click("#btnAccount");
+    assert.equal(await page.locator("#accountUnavailable").isVisible(), true);
+    assert.equal(await page.locator("#accountAuth").isVisible(), false);
+    await page.click("#accountClose");
+    passed(
+      "Sem API configurada, contas ficam indisponíveis e visitante continua funcionando",
+    );
     await fresh(() =>
       localStorage.setItem(
         "ff_web_apex2_v1",

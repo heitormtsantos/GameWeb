@@ -93,6 +93,9 @@ window.ArenaControls = (() => {
     snapshot() {
       return { ...this.values };
     }
+    replace(saved) {
+      this.values = new Bindings(saved).snapshot();
+    }
     label(id) {
       return label(this.values[id] || "");
     }

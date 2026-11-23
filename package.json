@@ -6,8 +6,10 @@
     "test": "node tests/run.cjs",
     "check": "node tests/syntax.cjs",
     "build": "python build-standalone.py",
-    "test:unit": "node --test tests/runtime.cjs tests/controls.cjs",
-    "test:browser": "node tests/regression.cjs"
+    "test:unit": "node --test tests/runtime.cjs tests/controls.cjs tests/save-model.cjs",
+    "test:browser": "node tests/regression.cjs",
+    "test:api": "npm test --prefix backend",
+    "test:accounts": "node tests/accounts-browser.cjs"
   },
   "devDependencies": {
     "playwright": "1.65.1"

@@ -58,8 +58,16 @@ Isso NÃO transforma o P2P em uma modalidade competitiva confiável.
 Conexão real entre duas redes diferentes não foi validada nesta entrega.
 
 CONTAS E RANQUEADAS
-Ainda não há login, banco de dados ou ranqueada competitiva. O progresso é local
-e editável pelo dono do navegador. Esses sistemas pertencem à próxima etapa.
+Cadastro, login, perfil e progresso online estão implementados com uma API
+Node.js e PostgreSQL. A API será hospedada separadamente na sua VPS.
+Consulte backend/README.md para Docker, HTTPS, banco e backups.
+Depois de subir a API, configure GAMEWEB_API_URL nas variáveis do GitHub e
+execute o workflow para ativar as contas. Até lá, o modo visitante funciona
+normalmente e o site informa que as contas estão indisponíveis.
+O progresso de visitante fica separado das contas. Importar é uma ação explícita
+para contas vazias. Saves offline aguardam envio; conflitos exigem escolher a versão.
+O perfil permite mudar apelido e senha. Não há recuperação automática por e-mail.
+As estatísticas e patentes são casuais; ainda não há ranqueada competitiva.
 O formato do save anterior foi preservado, mas navegadores podem separar os
 dados por origem/caminho; não existe migração automática do arquivo original.
 
@@ -70,6 +78,9 @@ theme.css: lobby, pausa, personalização, HUD e adaptação de layout.
 runtime.js: armazenamento, relógio, agendamento e liberação de recursos.
 avatars.js: fábrica de personagens e geometrias compartilhadas.
 browser-ui.js: prévia 3D, diálogos e controles do navegador.
+accounts.js / account-ui.js: sessões, login, perfil e sincronização.
+save-model.js: contrato de progresso compartilhado com a API.
+backend/: API, migrações, Docker e instruções para a VPS.
 game.js: regras e simulação adaptadas do protótipo original.
 vendor/: Three.js r128 e PeerJS 1.5.5, com suas licenças MIT.
 build-standalone.py: gera novamente o HTML único a partir desses arquivos.
@@ -80,7 +91,7 @@ O arquivo é escrito na pasta downloads/ do repositório.
 O index.html original em Downloads foi preservado.
 
 TESTES PARA DESENVOLVEDORES
-Instale Node.js e tenha o Chrome instalado. Nesta pasta, execute npm install,
-depois npm run check e npm test. Os testes usam apenas um servidor local
-temporário e uma cópia instrumentada do script, sem API de teste no jogo final.
+Instale Node.js 24 e tenha o Chrome instalado. Nesta pasta, execute npm ci,
+npm ci --prefix backend, depois npm run check e npm test. Os testes usam
+servidores locais temporários e PostgreSQL embarcado, sem API de teste no jogo final.
 Os resultados e capturas são gravados em test-results/.

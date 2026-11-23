@@ -1,0 +1,11 @@
+.git
+**/node_modules
+**/.env
+**/.env.*
+**/test-results
+site
+downloads
+docs
+outputs
+work
+backend/test

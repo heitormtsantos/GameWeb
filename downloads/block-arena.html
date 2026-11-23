@@ -1729,6 +1729,222 @@ kbd {
   border-radius: 7px;
   min-height: 38px;
 }
+[hidden] {
+  display: none !important;
+}
+#accountModal {
+  z-index: 75;
+  background: #142036bc;
+  backdrop-filter: blur(5px);
+}
+.account-shell {
+  max-width: 540px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  padding: 26px 30px;
+  border-radius: 17px;
+  font-size: 14px;
+}
+.account-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.account-shell h1 {
+  text-align: left;
+  color: var(--ink);
+  font-size: 29px;
+  letter-spacing: -1px;
+  margin: 8px 0 20px;
+}
+.account-button {
+  border: 1px solid var(--ink);
+  border-radius: 7px;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 9px 16px;
+  font-size: 12px;
+  font-weight: 900;
+  max-width: 170px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.account-button:hover {
+  background: var(--blue);
+  border-color: var(--blue);
+}
+.account-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+  gap: 20px;
+  margin-bottom: 19px;
+}
+.account-tabs button {
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: none;
+  color: var(--muted);
+  padding: 10px 0;
+  font-weight: 900;
+  cursor: pointer;
+  font-size: 14px;
+}
+.account-tabs button[aria-selected="true"] {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+.account-form {
+  display: grid;
+  gap: 9px;
+  margin: 15px 0 20px;
+}
+.account-form > label {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.account-form > input {
+  width: 100%;
+  min-width: 0;
+  min-height: 43px;
+  background: #fffef8;
+  border: 1px solid #c8ccbf;
+  border-radius: 7px;
+  padding: 10px 12px;
+  color: var(--ink);
+  font-size: 15px;
+  user-select: text;
+}
+.account-form > small {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.account-form .account-check {
+  font-size: 12px;
+  line-height: 1.6;
+  font-weight: 400;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 5px 0;
+}
+.account-check input {
+  accent-color: var(--blue);
+  margin-top: 3px;
+}
+.account-form .play-btn {
+  margin-top: 8px;
+  justify-content: center;
+}
+.account-form .secondary-btn {
+  justify-self: start;
+  padding: 10px 14px;
+  font-size: 12px;
+}
+.account-info {
+  font-size: 13px;
+  line-height: 1.6;
+  background: #e6eafa;
+  border: 1px solid #d3d9f0;
+  padding: 12px;
+  border-radius: 8px;
+  color: var(--ink);
+}
+.account-error {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #a02c21;
+  background: #fff0ea;
+  padding: 10px;
+  border-radius: 7px;
+}
+.account-success {
+  font-size: 13px;
+  color: #3d5d17;
+  line-height: 1.6;
+}
+.account-error:empty,
+.account-success:empty {
+  display: none;
+}
+.account-footnote {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 20px 0 0;
+}
+.account-summary {
+  padding: 3px 0 12px;
+  border-bottom: 1px solid var(--line);
+}
+.account-summary p {
+  margin: 0 0 7px;
+  overflow-wrap: anywhere;
+  font-weight: 700;
+}
+.account-summary small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.account-import {
+  font-size: 12px;
+  padding: 11px;
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+.account-password {
+  border-top: 1px solid var(--line);
+  padding: 15px 0;
+  font-size: 13px;
+}
+.account-password summary {
+  cursor: pointer;
+  font-weight: 800;
+}
+.account-logout {
+  color: #9d362a;
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 12px 0;
+}
+.account-conflict {
+  border: 1px solid #cfb276;
+  background: #fff5df;
+  padding: 13px;
+  border-radius: 8px;
+  margin: 15px 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.account-conflict h2 {
+  font-size: 16px;
+  margin: 0 0 9px;
+}
+.account-conflict p {
+  margin: 8px 0;
+}
+@media (max-width: 650px) {
+  .account-shell {
+    padding: 20px;
+  }
+  .account-button {
+    font-size: 11px;
+    max-width: 110px;
+    padding: 8px 11px;
+  }
+  .lobby-header-right .local-chip {
+    display: none;
+  }
+}
 .binding-status {
   position: sticky;
   top: 0;
@@ -1854,7 +2070,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           <div style="display: flex; flex-direction: column; gap: 8px">
             <div class="panel stats">
               <div class="stat">
-                <label>Nível local</label
+                <label>Nível casual</label
                 ><span id="uiRank" class="gold" style="font-size: 15px"
                   >Bronze</span
                 >
@@ -1978,6 +2194,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             ><span>BLOCK<br />ARENA<span class="brand-dot">.</span></span></a
           >
           <div class="lobby-header-right">
+            <button id="btnAccount" class="account-button" type="button">
+              Entrar
+            </button>
             <span class="local-chip"><i></i> EDIÇÃO NAVEGADOR</span
             ><button
               id="btnFullscreenLobby"
@@ -2009,7 +2228,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             <div class="profile-strip">
               <span class="profile-icon">★</span>
               <div>
-                <span class="eyebrow">PROGRESSO NESTE NAVEGADOR</span
+                <span class="eyebrow" id="progressScope"
+                  >PROGRESSO NESTE NAVEGADOR</span
                 ><b id="svRank">Bronze</b>
               </div>
               <button
@@ -2025,7 +2245,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
               <div><b id="svCapas">0</b><span>NA CABEÇA</span></div>
               <div><b id="svBooyahs">0</b><span>VITÓRIAS</span></div>
             </div>
-            <p class="local-note">
+            <p class="local-note" id="syncStatus">
               Jogue como visitante. O progresso fica salvo neste navegador.
             </p>
           </section>
@@ -2246,6 +2466,206 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       </section>
     </div>
     <div
+      id="accountModal"
+      class="modal-backdrop hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="accountTitle"
+    >
+      <section class="modal account-shell">
+        <div class="account-heading">
+          <span class="eyebrow">BLOCK ARENA</span
+          ><button
+            id="accountClose"
+            type="button"
+            class="icon-button"
+            aria-label="Fechar conta"
+          >
+            ×
+          </button>
+        </div>
+        <h1 id="accountTitle">Sua conta na arena</h1>
+        <p id="accountUnavailable" class="account-info" hidden>
+          As contas online ainda não estão disponíveis. Você pode continuar
+          jogando como visitante.
+        </p>
+        <p id="accountError" class="account-error" role="alert"></p>
+        <p id="accountMessage" class="account-success" role="status"></p>
+        <div id="accountAuth">
+          <div class="account-tabs" role="tablist" aria-label="Acesso à conta">
+            <button
+              id="accountLoginTab"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              aria-controls="accountLogin"
+            >
+              Entrar</button
+            ><button
+              id="accountRegisterTab"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="accountRegister"
+            >
+              Criar conta
+            </button>
+          </div>
+          <form id="accountLogin" class="account-form" role="tabpanel">
+            <label for="loginEmail">E-mail</label
+            ><input
+              id="loginEmail"
+              type="email"
+              autocomplete="username"
+              maxlength="254"
+              required
+            />
+            <label for="loginPassword">Senha</label
+            ><input
+              id="loginPassword"
+              type="password"
+              autocomplete="current-password"
+              minlength="12"
+              maxlength="128"
+              required
+            />
+            <label class="account-check"
+              ><input id="loginRemember" type="checkbox" /> Manter conectado por
+              até 7 dias neste dispositivo</label
+            >
+            <button type="submit" class="play-btn">Entrar na conta</button>
+          </form>
+          <form
+            id="accountRegister"
+            class="account-form"
+            role="tabpanel"
+            hidden
+          >
+            <label for="registerNickname">Apelido</label
+            ><input
+              id="registerNickname"
+              type="text"
+              autocomplete="nickname"
+              minlength="2"
+              maxlength="24"
+              required
+            />
+            <label for="registerEmail">E-mail</label
+            ><input
+              id="registerEmail"
+              type="email"
+              autocomplete="username"
+              maxlength="254"
+              required
+            />
+            <label for="registerPassword">Senha</label
+            ><input
+              id="registerPassword"
+              type="password"
+              autocomplete="new-password"
+              minlength="12"
+              maxlength="128"
+              aria-describedby="passwordHint"
+              required
+            /><small id="passwordHint"
+              >Use pelo menos 12 caracteres. Uma frase longa é uma boa
+              opção.</small
+            >
+            <label for="registerPasswordConfirm">Repita a senha</label
+            ><input
+              id="registerPasswordConfirm"
+              type="password"
+              autocomplete="new-password"
+              minlength="12"
+              maxlength="128"
+              required
+            />
+            <label class="account-check"
+              ><input id="registerRemember" type="checkbox" /> Manter conectado
+              neste dispositivo</label
+            >
+            <button type="submit" class="play-btn">Criar minha conta</button>
+          </form>
+          <p class="account-footnote">
+            As contas salvam progresso casual. Partidas competitivas ainda não
+            estão disponíveis.
+          </p>
+        </div>
+        <div id="accountProfile" hidden>
+          <div class="account-summary">
+            <p id="profileEmail"></p>
+            <small>Na arena desde <span id="profileCreatedAt"></span></small>
+          </div>
+          <p id="accountSyncStatus" class="account-info" role="status"></p>
+          <button id="accountRetry" type="button" class="secondary-btn" hidden>
+            Tentar sincronizar novamente
+          </button>
+          <div id="accountConflict" class="account-conflict" hidden>
+            <h2>Qual progresso deseja manter?</h2>
+            <p>As versões foram preservadas. Escolha uma para continuar.</p>
+            <p id="conflictOnline"></p>
+            <p id="conflictLocal"></p>
+            <div class="pause-actions">
+              <button id="useOnline" class="secondary-btn" type="button">
+                Usar progresso online</button
+              ><button id="useDevice" class="secondary-btn" type="button">
+                Usar deste dispositivo
+              </button>
+            </div>
+          </div>
+          <form id="accountProfileForm" class="account-form">
+            <label for="profileNickname">Seu apelido</label
+            ><input
+              id="profileNickname"
+              type="text"
+              autocomplete="nickname"
+              minlength="2"
+              maxlength="24"
+              required
+            /><button type="submit" class="secondary-btn">
+              Salvar apelido
+            </button>
+          </form>
+          <button
+            id="accountImport"
+            class="secondary-btn account-import"
+            type="button"
+            hidden
+          >
+            Importar o progresso de visitante deste navegador
+          </button>
+          <details class="account-password">
+            <summary>Alterar senha</summary>
+            <form id="accountPassword" class="account-form">
+              <label for="currentPassword">Senha atual</label
+              ><input
+                id="currentPassword"
+                type="password"
+                autocomplete="current-password"
+                minlength="12"
+                maxlength="128"
+                required
+              /><label for="newPassword">Nova senha</label
+              ><input
+                id="newPassword"
+                type="password"
+                autocomplete="new-password"
+                minlength="12"
+                maxlength="128"
+                required
+              /><button type="submit" class="secondary-btn">
+                Alterar senha
+              </button>
+            </form>
+          </details>
+          <button id="accountLogout" type="button" class="account-logout">
+            Sair da conta
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <div
       id="appNotice"
       role="status"
       aria-live="polite"
@@ -2323,9 +2743,20 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 /* Infrastructure shared by the game. No gameplay rules live here. */
 window.ArenaRuntime = (() => {
   "use strict";
-  function loadSave(key) {
+  let saveScope = "";
+  function scopedKey(key, scope = saveScope) {
+    return key === "ff_web_apex2_v1" && scope ? key + ":account:" + scope : key;
+  }
+  function setSaveScope(id = "") {
+    if (id && !/^[0-9a-f-]{36}$/i.test(id))
+      throw new Error("Invalid save scope");
+    saveScope = id;
+  }
+  function loadSave(key, scope) {
     try {
-      const value = JSON.parse(localStorage.getItem(key) || "{}");
+      const value = JSON.parse(
+        localStorage.getItem(scopedKey(key, scope)) || "{}",
+      );
       return value && typeof value === "object" && !Array.isArray(value)
         ? value
         : {};
@@ -2333,9 +2764,9 @@ window.ArenaRuntime = (() => {
       return {};
     }
   }
-  function save(key, value) {
+  function save(key, value, scope) {
     try {
-      localStorage.setItem(key, JSON.stringify(value));
+      localStorage.setItem(scopedKey(key, scope), JSON.stringify(value));
       return true;
     } catch {
       return false;
@@ -2442,6 +2873,7 @@ window.ArenaRuntime = (() => {
   };
   return {
     loadSave,
+    setSaveScope,
     save,
     number,
     choice,
@@ -2450,6 +2882,863 @@ window.ArenaRuntime = (() => {
     disposeObject,
     presets,
   };
+})();
+
+</script>
+    <script>
+/* One save contract shared by the browser and API. Casual stats are client-reported. */
+(function (root, factory) {
+  if (typeof module === "object" && module.exports) module.exports = factory();
+  else root.ArenaSave = factory();
+})(globalThis, () => {
+  "use strict";
+  const numeric = {
+    sens: [1, 0.3, 2.5],
+    redDotSens: [0.9, 0.3, 2.5],
+    sens2x: [0.8, 0.2, 2],
+    sens4x: [0.7, 0.2, 2],
+    assistStrength: [1, 0, 1.5],
+  };
+  const choices = {
+    aimMode: ["padrao", "precisa", "total"],
+    shirtColor: ["0x2563eb", "0xdc2626", "0xd97706", "0x7c3aed", "0x15803d"],
+    evoSkin: ["padrao", "dragao", "cobra", "trovao"],
+    skill: ["alok", "chrono", "tatsuya"],
+    pet: ["panda", "waggor", "falcao", "none"],
+    timeOfDay: ["dia", "tarde", "noite", "chuva"],
+    skinTone: ["0xf3c59d", "0xd99c70", "0x8d5a3a", "0xffda64"],
+    hatStyle: ["cap", "none"],
+    hatColor: ["0xffcf4a", "0xf3f0e7", "0x142036"],
+    quality: ["medium", "low", "high"],
+  };
+  const defaultKeys = {
+    forward: "KeyW",
+    backward: "KeyS",
+    left: "KeyA",
+    right: "KeyD",
+    sprint: "ShiftLeft",
+    jump: "Space",
+    crouch: "KeyC",
+    freeLook: "AltLeft",
+    fire: "KeyF",
+    reload: "KeyR",
+    previous: "KeyQ",
+    shoulder: "KeyU",
+    gel: "KeyG",
+    crouchGel: "KeyV",
+    medkit: "KeyE",
+    inhaler: "KeyI",
+    grenade: "KeyT",
+    mine: "KeyM",
+    smoke: "KeyX",
+    skill: "KeyZ",
+    uav: "KeyK",
+    interact: "Enter",
+    emote: "KeyB",
+    menu: "KeyP",
+    settings: "KeyH",
+    weapon1: "Digit1",
+    weapon2: "Digit2",
+    weapon3: "Digit3",
+    weapon4: "Digit4",
+    weapon5: "Digit5",
+    weapon6: "Digit6",
+    weapon7: "Digit7",
+    weapon8: "Digit8",
+    weapon9: "Digit9",
+    weapon0: "Digit0",
+    weaponVector: "KeyY",
+  };
+  const keyPattern =
+    "^(Key[A-Z]|Digit[0-9]|Space|Enter|Backspace|CapsLock|Shift(Left|Right)|Control(Left|Right)|Alt(Left|Right)|Arrow(Up|Down|Left|Right)|Insert|Delete|Home|End|PageUp|PageDown)$";
+  const counts = ["totalKills", "totalCapas", "totalBooyahs", "boomKills"];
+  const properties = {
+    schemaVersion: { const: 1 },
+    bonusPts: { type: "integer", minimum: 0, maximum: 600 },
+  };
+  for (const [key, [, minimum, maximum]] of Object.entries(numeric))
+    properties[key] = { type: "number", minimum, maximum };
+  for (const [key, values] of Object.entries(choices))
+    properties[key] = { type: "string", enum: values };
+  for (const key of counts)
+    properties[key] = { type: "integer", minimum: 0, maximum: 1e9 };
+  properties.keyBindings = {
+    type: "object",
+    additionalProperties: false,
+    required: Object.keys(defaultKeys),
+    properties: Object.fromEntries(
+      Object.keys(defaultKeys).map((key) => [
+        key,
+        { type: "string", pattern: keyPattern },
+      ]),
+    ),
+  };
+  const schema = {
+    type: "object",
+    additionalProperties: false,
+    required: Object.keys(properties),
+    properties,
+  };
+  function normalize(input = {}) {
+    const data =
+      input && typeof input === "object" && !Array.isArray(input) ? input : {};
+    const result = { schemaVersion: 1 };
+    for (const [key, [fallback, min, max]] of Object.entries(numeric))
+      result[key] =
+        typeof data[key] === "number" && Number.isFinite(data[key])
+          ? Math.max(min, Math.min(max, data[key]))
+          : fallback;
+    for (const [key, values] of Object.entries(choices))
+      result[key] = values.includes(data[key]) ? data[key] : values[0];
+    for (const key of counts)
+      result[key] =
+        typeof data[key] === "number" && Number.isFinite(data[key])
+          ? Math.max(0, Math.min(1e9, Math.floor(data[key])))
+          : 0;
+    result.totalCapas = Math.min(result.totalCapas, result.totalKills);
+    result.boomKills = Math.min(result.boomKills, result.totalKills);
+    result.bonusPts =
+      (result.totalCapas >= 5 ? 150 : 0) +
+      (result.boomKills >= 1 ? 150 : 0) +
+      (result.totalBooyahs >= 1 ? 300 : 0);
+    const keys = data.keyBindings,
+      values =
+        keys && typeof keys === "object"
+          ? Object.keys(defaultKeys).map((key) => keys[key])
+          : [];
+    const valid =
+      values.length === Object.keys(defaultKeys).length &&
+      values.every(
+        (value) =>
+          typeof value === "string" && new RegExp(keyPattern).test(value),
+      ) &&
+      new Set(values).size === values.length;
+    result.keyBindings = valid
+      ? Object.fromEntries(
+          Object.keys(defaultKeys).map((key, i) => [key, values[i]]),
+        )
+      : { ...defaultKeys };
+    return result;
+  }
+  function consistent(data) {
+    return (
+      !!data &&
+      !!data.keyBindings &&
+      data.totalCapas <= data.totalKills &&
+      data.boomKills <= data.totalKills &&
+      new Set(Object.values(data.keyBindings)).size ===
+        Object.keys(defaultKeys).length &&
+      data.bonusPts === normalize(data).bonusPts
+    );
+  }
+  return { normalize, schema, consistent, defaultKeys };
+});
+
+</script>
+    <script>
+window.ArenaAccountConfig=Object.freeze({"apiBaseUrl": ""});
+
+</script>
+    <script>
+/* Cross-device casual progress. No account token is included in the game save. */
+window.ArenaAccounts = (() => {
+  "use strict";
+  const SAVE = "ff_web_apex2_v1",
+    AUTH = "block-arena:session:v1";
+  const equal = (a, b) =>
+    JSON.stringify(ArenaSave.normalize(a)) ===
+    JSON.stringify(ArenaSave.normalize(b));
+  function getRecord(storage, key) {
+    try {
+      return JSON.parse(storage.getItem(key) || "null");
+    } catch {
+      return null;
+    }
+  }
+  function putRecord(storage, key, value) {
+    try {
+      value
+        ? storage.setItem(key, JSON.stringify(value))
+        : storage.removeItem(key);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  function endpoint(value) {
+    if (!value) return "";
+    try {
+      const url = new URL(value);
+      if (
+        url.username ||
+        url.password ||
+        url.search ||
+        url.hash ||
+        url.pathname !== "/"
+      )
+        return "";
+      if (
+        url.protocol !== "https:" &&
+        !(
+          url.protocol === "http:" &&
+          ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname)
+        )
+      )
+        return "";
+      return url.origin;
+    } catch {
+      return "";
+    }
+  }
+  function create({
+    apiBaseUrl = "",
+    adapter,
+    timeout = 6000,
+    debounce = 1200,
+  }) {
+    const storage = (name) => {
+        try {
+          return window[name];
+        } catch {
+          return null;
+        }
+      },
+      tabStore = storage("sessionStorage"),
+      persistentStore = storage("localStorage");
+    const base = endpoint(apiBaseUrl),
+      listeners = new Set();
+    let session = null,
+      user = null,
+      validated = false,
+      revision = 0,
+      latest = null,
+      pending = null,
+      dirty = false,
+      conflict = null,
+      status = "guest",
+      message = "",
+      booting = false,
+      busy = false,
+      sending = null,
+      timer = null,
+      epoch = 0;
+    const guest = () => ArenaSave.normalize(ArenaRuntime.loadSave(SAVE, ""));
+    const cacheKey = (id) => "block-arena:pending:" + id;
+    const view = () => ({
+      configured: !!base,
+      user,
+      authenticated: !!session && validated && status !== "expired",
+      status,
+      message,
+      booting,
+      busy,
+      revision,
+      conflict: conflict ? { online: conflict.data, local: latest } : null,
+      canImport:
+        !!session &&
+        validated &&
+        revision === 0 &&
+        !dirty &&
+        !pending &&
+        !conflict &&
+        !equal(guest(), ArenaSave.normalize()),
+    });
+    const emit = () => {
+      for (const fn of listeners) fn(view());
+    };
+    function setStatus(next, text = "") {
+      status = next;
+      message = text;
+      emit();
+    }
+    function cache() {
+      if (user)
+        ArenaRuntime.save(cacheKey(user.id), {
+          revision,
+          pending,
+          latest,
+          dirty,
+        });
+    }
+    function credentials() {
+      if (!session) return;
+      const saved = putRecord(
+        session.remember ? persistentStore : tabStore,
+        AUTH,
+        session,
+      );
+      putRecord(session.remember ? tabStore : persistentStore, AUTH, null);
+      if (!saved)
+        ArenaUI.notice(
+          "O navegador não permitiu manter a sessão. A conta continuará aberta nesta página.",
+        );
+    }
+    function ensureIdle() {
+      if (!adapter.canApply())
+        throw new Error(
+          "Volte ao lobby para trocar de conta ou carregar outro progresso.",
+        );
+    }
+    async function request(
+      path,
+      { method = "GET", body, token = session?.token } = {},
+    ) {
+      if (!base)
+        throw new Error("As contas online ainda não estão disponíveis.");
+      const controller = new AbortController(),
+        cancel = setTimeout(() => controller.abort(), timeout);
+      try {
+        const response = await fetch(base + path, {
+          method,
+          signal: controller.signal,
+          cache: "no-store",
+          credentials: "omit",
+          headers: {
+            ...(body ? { "Content-Type": "application/json" } : {}),
+            ...(token ? { Authorization: "Bearer " + token } : {}),
+          },
+          body: body ? JSON.stringify(body) : undefined,
+        });
+        const data =
+          response.status === 204
+            ? {}
+            : await response.json().catch(() => ({}));
+        if (!response.ok) {
+          const error = new Error(
+            data.error?.message || "Não foi possível concluir agora.",
+          );
+          error.status = response.status;
+          error.code = data.error?.code;
+          error.progress = data.error?.progress;
+          throw error;
+        }
+        return data;
+      } catch (error) {
+        if (!error.status) {
+          error.network = true;
+          error.message =
+            "Sem conexão com as contas. Suas alterações continuam salvas neste dispositivo.";
+        }
+        throw error;
+      } finally {
+        clearTimeout(cancel);
+      }
+    }
+    function expire() {
+      validated = false;
+      session = null;
+      putRecord(tabStore, AUTH, null);
+      putRecord(persistentStore, AUTH, null);
+      setStatus(
+        "expired",
+        "Sua sessão expirou. Entre novamente para sincronizar.",
+      );
+    }
+    function apply(data, id) {
+      ArenaRuntime.setSaveScope(id);
+      adapter.apply(ArenaSave.normalize(data));
+    }
+    function schedule() {
+      clearTimeout(timer);
+      if (session && validated && !conflict)
+        timer = setTimeout(() => flush().catch(() => {}), debounce);
+    }
+    function queueSave(data) {
+      if (!user) return;
+      const normalized = ArenaSave.normalize(data);
+      if (latest && equal(latest, normalized)) return;
+      latest = normalized;
+      dirty = true;
+      cache();
+      if (status !== "expired" && !conflict)
+        setStatus("pending", "Alterações salvas neste dispositivo.");
+      schedule();
+    }
+    async function flush() {
+      clearTimeout(timer);
+      if (sending) return sending;
+      if (!session || !validated || conflict || (!dirty && !pending)) return;
+      if (!pending) {
+        pending = {
+          baseRevision: revision,
+          mutationId: crypto.randomUUID(),
+          data: ArenaSave.normalize(latest),
+        };
+        cache();
+      }
+      const operation = pending,
+        ownEpoch = epoch;
+      setStatus("saving");
+      sending = (async () => {
+        try {
+          const result = await request("/v1/me/progress", {
+            method: "PUT",
+            body: operation,
+          });
+          if (ownEpoch !== epoch) return;
+          if (
+            result.current &&
+            result.current.revision > result.progress.revision
+          ) {
+            conflict = result.current;
+            dirty = true;
+            cache();
+            setStatus(
+              "conflict",
+              "Há progresso mais recente em outro dispositivo.",
+            );
+            return;
+          }
+          revision = result.progress.revision;
+          pending = null;
+          dirty = !equal(latest, operation.data);
+          cache();
+          setStatus(dirty ? "pending" : "saved");
+        } catch (error) {
+          if (ownEpoch !== epoch) return;
+          if (error.code === "PROGRESS_CONFLICT") {
+            conflict = error.progress;
+            cache();
+            setStatus("conflict", error.message);
+          } else if (error.status === 401) expire();
+          else {
+            cache();
+            setStatus(error.network ? "offline" : "error", error.message);
+          }
+          throw error;
+        } finally {
+          sending = null;
+          if (ownEpoch === epoch && dirty && !conflict && status === "pending")
+            schedule();
+        }
+      })();
+      return sending;
+    }
+    async function adopt(result, remember) {
+      user = result.user;
+      session = {
+        token: result.token || session?.token,
+        expiresAt: result.expiresAt || session?.expiresAt,
+        user,
+        remember,
+      };
+      validated = true;
+      const cached = ArenaRuntime.loadSave(cacheKey(user.id)),
+        remote = result.progress;
+      revision = Number.isInteger(cached.revision)
+        ? cached.revision
+        : remote.revision;
+      pending = cached.pending?.mutationId ? cached.pending : null;
+      dirty = !!cached.dirty || !!pending;
+      conflict = null;
+      latest = dirty
+        ? ArenaSave.normalize(cached.latest || pending?.data)
+        : ArenaSave.normalize(remote.data);
+      if (!dirty) revision = remote.revision;
+      credentials();
+      ArenaRuntime.setSaveScope(user.id);
+      if (adapter.canApply()) apply(latest, user.id);
+      else if (!equal(adapter.snapshot(), latest)) {
+        latest = ArenaSave.normalize(adapter.snapshot());
+        dirty = true;
+        conflict = remote;
+      }
+      cache();
+      setStatus(conflict ? "conflict" : dirty ? "pending" : "saved");
+      if (dirty && !conflict) await flush().catch(() => {});
+    }
+    async function authenticate(kind, body) {
+      ensureIdle();
+      busy = true;
+      emit();
+      try {
+        const result = await request("/v1/auth/" + kind, {
+          method: "POST",
+          body,
+          token: null,
+        });
+        epoch++;
+        await adopt(result, !!body.remember);
+      } finally {
+        busy = false;
+        emit();
+      }
+    }
+    async function start() {
+      const stored =
+        getRecord(tabStore, AUTH) || getRecord(persistentStore, AUTH);
+      if (!base || !stored?.token || !stored.user?.id) return;
+      if (
+        !/^[A-Za-z0-9_-]{43}$/.test(stored.token) ||
+        !(Date.parse(stored.expiresAt) > Date.now())
+      ) {
+        putRecord(tabStore, AUTH, null);
+        putRecord(persistentStore, AUTH, null);
+        setStatus("expired", "Entre novamente para carregar sua conta.");
+        return;
+      }
+      session = stored;
+      booting = true;
+      adapter.bootBusy(true);
+      setStatus("loading");
+      try {
+        const result = await request("/v1/me");
+        await adopt(
+          { ...result, token: stored.token, expiresAt: stored.expiresAt },
+          !!stored.remember,
+        );
+      } catch (error) {
+        if (error.status === 401) expire();
+        else {
+          user = stored.user;
+          const cached = ArenaRuntime.loadSave(cacheKey(user.id));
+          revision = cached.revision || 0;
+          pending = cached.pending || null;
+          dirty = !!cached.dirty || !!pending;
+          latest = ArenaSave.normalize(
+            cached.latest || ArenaRuntime.loadSave(SAVE, user.id),
+          );
+          apply(latest, user.id);
+          setStatus("offline", error.message);
+        }
+      } finally {
+        booting = false;
+        adapter.bootBusy(false);
+        emit();
+      }
+    }
+    async function retry() {
+      if (!session) return;
+      if (!validated) {
+        busy = true;
+        emit();
+        try {
+          const result = await request("/v1/me");
+          await adopt(
+            { ...result, token: session.token, expiresAt: session.expiresAt },
+            session.remember,
+          );
+        } catch (error) {
+          if (error.status === 401) expire();
+          else setStatus("offline", error.message);
+        } finally {
+          busy = false;
+          emit();
+        }
+      } else return flush();
+    }
+    async function logout() {
+      ensureIdle();
+      if (busy || sending)
+        throw new Error("Aguarde a sincronização em andamento.");
+      const old = session;
+      epoch++;
+      clearTimeout(timer);
+      session = null;
+      user = null;
+      validated = false;
+      pending = null;
+      latest = null;
+      dirty = false;
+      conflict = null;
+      putRecord(tabStore, AUTH, null);
+      putRecord(persistentStore, AUTH, null);
+      apply(guest(), "");
+      setStatus("guest");
+      if (old)
+        await request("/v1/auth/logout", {
+          method: "POST",
+          token: old.token,
+        }).catch(() => {});
+    }
+    async function updateProfile(nickname) {
+      if (!session || !validated)
+        throw new Error("Entre novamente para editar seu perfil.");
+      const result = await request("/v1/me/profile", {
+        method: "PATCH",
+        body: { nickname },
+      });
+      user = result.user;
+      session.user = user;
+      credentials();
+      emit();
+    }
+    async function changePassword(currentPassword, newPassword) {
+      if (!session || !validated)
+        throw new Error("Entre novamente para alterar a senha.");
+      const result = await request("/v1/me/password", {
+        method: "POST",
+        body: { currentPassword, newPassword },
+      });
+      session = {
+        ...session,
+        token: result.token,
+        expiresAt: result.expiresAt,
+      };
+      credentials();
+      emit();
+    }
+    async function importGuest() {
+      ensureIdle();
+      if (!view().canImport)
+        throw new Error(
+          "A importação está disponível apenas para uma conta sem progresso.",
+        );
+      latest = guest();
+      dirty = true;
+      apply(latest, user.id);
+      cache();
+      return flush();
+    }
+    async function resolveConflict(choice) {
+      ensureIdle();
+      if (!conflict) return;
+      revision = conflict.revision;
+      pending = null;
+      const online = conflict.data;
+      conflict = null;
+      if (choice === "online") {
+        latest = ArenaSave.normalize(online);
+        dirty = false;
+        apply(latest, user.id);
+        cache();
+        setStatus("saved");
+      } else {
+        dirty = true;
+        cache();
+        await flush();
+      }
+    }
+    window.addEventListener("online", () => retry().catch(() => {}));
+    window.addEventListener("pagehide", cache);
+    return {
+      view,
+      subscribe(fn) {
+        listeners.add(fn);
+        fn(view());
+        return () => listeners.delete(fn);
+      },
+      start,
+      authenticate,
+      queueSave,
+      flush,
+      retry,
+      logout,
+      updateProfile,
+      changePassword,
+      importGuest,
+      resolveConflict,
+    };
+  }
+  return { create };
+})();
+
+</script>
+    <script>
+window.ArenaAccountUI = (() => {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  function init(account) {
+    let busy = false,
+      mode = "login";
+    const modal = $("accountModal");
+    function close() {
+      if (busy) return;
+      modal.classList.add("hidden");
+      $("btnAccount").focus();
+    }
+    function showForm(next) {
+      mode = next;
+      $("accountLogin").hidden = mode !== "login";
+      $("accountRegister").hidden = mode !== "register";
+      $("accountError").textContent = "";
+      $("accountLoginTab").setAttribute(
+        "aria-selected",
+        String(mode === "login"),
+      );
+      $("accountRegisterTab").setAttribute(
+        "aria-selected",
+        String(mode === "register"),
+      );
+    }
+    function render(state) {
+      const logged = !!state.user && state.status !== "expired";
+      $("btnAccount").textContent = logged ? state.user.nickname : "Entrar";
+      $("accountProfile").hidden = !logged;
+      $("accountAuth").hidden = logged || !state.configured;
+      $("accountUnavailable").hidden = state.configured;
+      $("accountTitle").textContent = logged
+        ? "Seu perfil"
+        : "Sua conta na arena";
+      $("progressScope").textContent = logged
+        ? "PROGRESSO DA SUA CONTA"
+        : "PROGRESSO NESTE NAVEGADOR";
+      const labels = {
+        guest:
+          "Jogue como visitante ou entre para levar seu progresso a outros dispositivos.",
+        loading: "Carregando sua conta…",
+        saved: "Progresso salvo online.",
+        pending: "Alterações salvas neste dispositivo. Aguardando envio.",
+        saving: "Salvando progresso online…",
+        offline: "Sem conexão. Progresso salvo neste dispositivo.",
+        conflict: "Há progresso mais recente em outro dispositivo.",
+        expired: "Sessão expirada. Entre novamente para sincronizar.",
+        error: state.message,
+      };
+      $("syncStatus").textContent = state.configured
+        ? labels[state.status] || state.message
+        : "Jogue como visitante. O progresso fica salvo neste navegador.";
+      $("accountSyncStatus").textContent =
+        labels[state.status] || state.message;
+      if (logged) {
+        $("profileEmail").textContent = state.user.email;
+        $("profileCreatedAt").textContent = new Date(
+          state.user.createdAt,
+        ).toLocaleDateString("pt-BR");
+        if (document.activeElement !== $("profileNickname"))
+          $("profileNickname").value = state.user.nickname;
+      }
+      $("accountImport").hidden = !state.canImport;
+      $("accountConflict").hidden = !state.conflict;
+      if (state.conflict) {
+        $("conflictOnline").textContent =
+          `Online: ${state.conflict.online.totalKills} abates, ${state.conflict.online.totalBooyahs} vitórias`;
+        $("conflictLocal").textContent =
+          `Neste dispositivo: ${state.conflict.local.totalKills} abates, ${state.conflict.local.totalBooyahs} vitórias`;
+      }
+      $("accountRetry").hidden = !["offline", "error", "pending"].includes(
+        state.status,
+      );
+      for (const button of modal.querySelectorAll(
+        'button[type="submit"],#accountImport,#accountRetry,#accountLogout,#useOnline,#useDevice',
+      ))
+        button.disabled = busy || state.busy || state.booting;
+      if (state.status === "expired" && state.user)
+        $("loginEmail").value = state.user.email;
+    }
+    async function action(fn, success) {
+      if (busy) return;
+      busy = true;
+      $("accountError").textContent = "";
+      render(account.view());
+      try {
+        await fn();
+        if (success) $("accountMessage").textContent = success;
+      } catch (error) {
+        $("accountError").textContent = error.message;
+      } finally {
+        busy = false;
+        render(account.view());
+      }
+    }
+    $("btnAccount").onclick = () => {
+      modal.classList.remove("hidden");
+      $("accountMessage").textContent = "";
+      showForm("login");
+      render(account.view());
+      if (account.view().configured && !account.view().user)
+        $("loginEmail").focus();
+      else $("accountClose").focus();
+    };
+    $("accountClose").onclick = close;
+    $("accountLoginTab").onclick = () => showForm("login");
+    $("accountRegisterTab").onclick = () => showForm("register");
+    $("accountLogin").onsubmit = (event) => {
+      event.preventDefault();
+      const body = {
+        email: $("loginEmail").value.trim(),
+        password: $("loginPassword").value,
+        remember: $("loginRemember").checked,
+      };
+      action(async () => {
+        await account.authenticate("login", body);
+        $("loginPassword").value = "";
+      }, "Conta carregada.");
+    };
+    $("accountRegister").onsubmit = (event) => {
+      event.preventDefault();
+      if ($("registerPassword").value !== $("registerPasswordConfirm").value) {
+        $("accountError").textContent = "As senhas precisam ser iguais.";
+        return;
+      }
+      action(async () => {
+        await account.authenticate("register", {
+          email: $("registerEmail").value.trim(),
+          nickname: $("registerNickname").value.trim(),
+          password: $("registerPassword").value,
+          remember: $("registerRemember").checked,
+        });
+        $("registerPassword").value = $("registerPasswordConfirm").value = "";
+      }, "Conta criada. Seu progresso online está pronto.");
+    };
+    $("accountProfileForm").onsubmit = (event) => {
+      event.preventDefault();
+      const nickname = $("profileNickname").value.trim();
+      action(() => account.updateProfile(nickname), "Apelido atualizado.");
+    };
+    $("accountPassword").onsubmit = (event) => {
+      event.preventDefault();
+      action(async () => {
+        await account.changePassword(
+          $("currentPassword").value,
+          $("newPassword").value,
+        );
+        $("currentPassword").value = $("newPassword").value = "";
+      }, "Senha alterada. As outras sessões foram encerradas.");
+    };
+    $("accountLogout").onclick = () =>
+      action(
+        () => account.logout(),
+        "Você saiu da conta. O modo visitante foi restaurado.",
+      );
+    $("accountImport").onclick = () =>
+      action(
+        () => account.importGuest(),
+        "Progresso de visitante importado para esta conta.",
+      );
+    $("accountRetry").onclick = () => action(() => account.retry());
+    $("useOnline").onclick = () =>
+      action(
+        () => account.resolveConflict("online"),
+        "Progresso online carregado.",
+      );
+    $("useDevice").onclick = () =>
+      action(
+        () => account.resolveConflict("device"),
+        "Progresso deste dispositivo enviado.",
+      );
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        if (modal.classList.contains("hidden")) return;
+        if (event.code === "Escape") {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          close();
+          return;
+        }
+        if (event.code === "Tab") {
+          const nodes = [
+            ...modal.querySelectorAll("button,input,select"),
+          ].filter((item) => !item.disabled && item.getClientRects().length);
+          const first = nodes[0],
+            last = nodes.at(-1);
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+          }
+        }
+      },
+      true,
+    );
+    account.subscribe(render);
+    showForm("login");
+    return { close };
+  }
+  return { init };
 })();
 
 </script>
@@ -2576,6 +3865,9 @@ window.ArenaControls = (() => {
     }
     snapshot() {
       return { ...this.values };
+    }
+    replace(saved) {
+      this.values = new Bindings(saved).snapshot();
     }
     label(id) {
       return label(this.values[id] || "");
@@ -3272,6 +4564,12 @@ window.ArenaUI = (() => {
       },
       renderPreview,
       refreshAvatar,
+      refreshSave() {
+        refreshAvatar();
+        keyEditor.refresh();
+        refreshHints();
+        $("qualitySel").value = $("qualityPause").value = state.quality;
+      },
     };
   }
   return { init, notice, fatal };
@@ -3290,7 +4588,8 @@ window.ArenaUI = (() => {
   const R = ArenaRuntime,
     clock = new R.SimulationClock(),
     disposeObject = R.disposeObject;
-  let ui = null;
+  let ui = null,
+    accounts = null;
   const $ = (id) => document.getElementById(id);
 
   // TEXTURAS & MIRAS PNG
@@ -3522,12 +4821,8 @@ window.ArenaUI = (() => {
       )
       .join("");
   }
-  function persistSave() {
-    statsTotal.bonusPts =
-      (statsTotal.capas >= 5 ? 150 : 0) +
-      (statsTotal.boomKills >= 1 ? 150 : 0) +
-      (statsTotal.booyahs >= 1 ? 300 : 0);
-    const stored = R.save(SAVE_KEY, {
+  function snapshotSave() {
+    return ArenaSave.normalize({
       sens: state.sens,
       redDotSens: state.redDotSens,
       sens2x: state.sens2x,
@@ -3550,6 +4845,15 @@ window.ArenaUI = (() => {
       quality: state.quality,
       keyBindings: bindings.snapshot(),
     });
+  }
+  function persistSave(options = {}) {
+    statsTotal.bonusPts =
+      (statsTotal.capas >= 5 ? 150 : 0) +
+      (statsTotal.boomKills >= 1 ? 150 : 0) +
+      (statsTotal.booyahs >= 1 ? 300 : 0);
+    const snapshot = snapshotSave();
+    const stored = R.save(SAVE_KEY, snapshot);
+    if (!options.skipCloud) accounts?.queueSave(snapshot);
     if (!stored && !persistSave.warned) {
       persistSave.warned = true;
       ArenaUI.notice(
@@ -4941,6 +6245,7 @@ window.ArenaUI = (() => {
     ["assistStrength", "Assistência", 0, 1.5],
   ].forEach(([p, l, mn, mx]) => {
     const r = document.createElement("div");
+    r.dataset.setting = p;
     r.className = "set-row";
     const v = () =>
       p === "assistStrength"
@@ -8288,6 +9593,79 @@ window.ArenaUI = (() => {
     leaveGame,
   });
   ui.lobby();
+  function applyAccountSave(raw) {
+    const data = ArenaSave.normalize(raw);
+    for (const key of [
+      "sens",
+      "redDotSens",
+      "sens2x",
+      "sens4x",
+      "assistStrength",
+      "aimMode",
+      "shirtColor",
+      "evoSkin",
+      "skill",
+      "pet",
+      "timeOfDay",
+      "skinTone",
+      "hatStyle",
+      "hatColor",
+      "quality",
+    ])
+      state[key] = data[key];
+    statsTotal.kills = data.totalKills;
+    statsTotal.capas = data.totalCapas;
+    statsTotal.booyahs = data.totalBooyahs;
+    statsTotal.boomKills = data.boomKills;
+    statsTotal.bonusPts = data.bonusPts;
+    bindings.replace(data.keyBindings);
+    releaseInputs();
+    lastHudAt = 0;
+    for (const [id, key] of [
+      ["aimMode", "aimMode"],
+      ["skinColorSel", "shirtColor"],
+      ["evoSkinSel", "evoSkin"],
+      ["skillSel", "skill"],
+      ["petSel", "pet"],
+      ["timeSel", "timeOfDay"],
+      ["skinToneSel", "skinTone"],
+      ["hatStyleSel", "hatStyle"],
+      ["hatColorSel", "hatColor"],
+    ])
+      $(id).value = data[key];
+    for (const row of document.querySelectorAll("[data-setting]")) {
+      const key = row.dataset.setting;
+      row.querySelector("input").value = data[key];
+      row.querySelector("b").textContent =
+        key === "assistStrength"
+          ? Math.round(data[key] * 100) + "%"
+          : data[key].toFixed(1);
+    }
+    for (const slot of weaponSlots)
+      slot.querySelector("b").textContent =
+        `${keyHint(slot.dataset.action)} • ${WEAPONS[slot.dataset.w].short}`;
+    applyTimeOfDay(state.timeOfDay);
+    updatePetVisual(state.pet);
+    applyQuality(state.quality);
+    disposeObject(playerChar.currentGun);
+    playerChar.currentGun = buildWeaponModel(state.weaponKey, state.evoSkin);
+    playerChar.gunHolder.add(playerChar.currentGun);
+    ui.refreshSave();
+    persistSave({ skipCloud: true });
+  }
+  accounts = ArenaAccounts.create({
+    apiBaseUrl: ArenaAccountConfig.apiBaseUrl,
+    adapter: {
+      snapshot: snapshotSave,
+      apply: applyAccountSave,
+      canApply: () => !state.started,
+      bootBusy: (value) => {
+        $("playBtn").disabled = value;
+      },
+    },
+  });
+  ArenaAccountUI.init(accounts);
+  accounts.start();
   function animate(realNow) {
     requestAnimationFrame(animate);
     if (!isSimulating()) {

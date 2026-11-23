@@ -1,14 +1,17 @@
 VALIDAÇÃO — BLOCK ARENA — 23/11/2026
 
-12 testes unitários e 28 verificações no navegador aprovados.
+74 testes aprovados: 15 unitários, 18 da API, 29 de regressão no navegador
+e 12 de integração de contas no navegador com API HTTP real.
 Navegador: Chrome headless com WebGL por SwiftShader. Esses testes não medem FPS em uma placa gráfica real.
 
 UNITÁRIOS
 Pentes independentes por arma; reset de pentes; configuração/persistência de teclas; conflitos; recuperação de mapa inválido; restauração; atalhos simultâneos.
 Relógio fixo em 5, 10, 30, 60 e 144 FPS; pausa de ações; backlog de quadro longo preservado com orçamento de execução.
+Contrato de save compartilhado; normalização de estatísticas e teclas; campos desconhecidos descartados no cliente.
 
 NAVEGADOR
 PASSOU: Inicialização com JSON corrompido
+PASSOU: Sem API configurada, contas indisponíveis e modo visitante funcional
 PASSOU: Valores inválidos no save recuperados
 PASSOU: Armazenamento bloqueado não impede jogar
 PASSOU: Personalização real e persistência do avatar
@@ -37,7 +40,32 @@ PASSOU: Memória gráfica estável em 20 ciclos de efeitos e limpeza
 PASSOU: Lobby sem rolagem horizontal em 390, 768 e 1366 pixels
 PASSOU: Sem exceções JavaScript durante os testes
 
-20 ciclos de efeitos e limpeza: geometrias 164 → 164; texturas 7 → 7.
+20 ciclos de efeitos e limpeza: geometrias 165 → 165; texturas 7 → 7.
+
+API E CONTAS
+PASSOU: Migrações PostgreSQL repetíveis e healthcheck com acesso ao banco
+PASSOU: Cadastro, normalização de e-mail, duplicidade e validação de campos
+PASSOU: Senhas com hash scrypt; tokens com hash no banco e fora do save
+PASSOU: Login, erro genérico de credenciais, expiração, logout e rate limit
+PASSOU: Usuário não acessa nem sobrescreve dados de outra conta
+PASSOU: Perfil, alteração de senha e revogação de sessões anteriores
+PASSOU: Schema de progresso, revisão, idempotência e concorrência de saves
+PASSOU: CORS de origem explícita e respostas privadas sem cache
+PASSOU: Cadastro não importa o visitante sem uma ação explícita
+PASSOU: Outro dispositivo recebe perfil, aparência e estatísticas
+PASSOU: Alterações offline sobrevivem à recarga e sincronizam na reconexão
+PASSOU: Conflitos preservam versões e permitem escolha online/dispositivo
+PASSOU: Resposta perdida não sobrescreve progresso mais recente na repetição
+PASSOU: Troca de contas mantém caches separados e restaura o visitante
+PASSOU: Configuração de build aceita somente origem pública HTTPS ou HTTP loopback
+PASSOU: Build do Pages e HTML único recebem a mesma configuração da API
+PASSOU: Pacote público não inclui backend, testes, node_modules ou arquivos .env
+
+Os testes de API usam PGlite com as migrações e consultas reais de PostgreSQL.
+O workflow também verifica Docker com PostgreSQL 17 antes de liberar o deploy.
+A API não foi implantada numa VPS nesta entrega; isso será feito pelo usuário.
+Sem GAMEWEB_API_URL, o site mantém o modo visitante, sem chamadas de login.
+Estatísticas são casuais; não há servidor competitivo ou antitrapaça.
 
 As edições modular e de arquivo único abriram offline por file://, sem erros ou requisições falhas. Foram verificados personalização de teclas, tiro de clique rápido, recarga com a nova tecla, pausa e retorno ao lobby.
 

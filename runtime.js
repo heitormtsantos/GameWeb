@@ -1,9 +1,20 @@
 /* Infrastructure shared by the game. No gameplay rules live here. */
 window.ArenaRuntime = (() => {
   "use strict";
-  function loadSave(key) {
+  let saveScope = "";
+  function scopedKey(key, scope = saveScope) {
+    return key === "ff_web_apex2_v1" && scope ? key + ":account:" + scope : key;
+  }
+  function setSaveScope(id = "") {
+    if (id && !/^[0-9a-f-]{36}$/i.test(id))
+      throw new Error("Invalid save scope");
+    saveScope = id;
+  }
+  function loadSave(key, scope) {
     try {
-      const value = JSON.parse(localStorage.getItem(key) || "{}");
+      const value = JSON.parse(
+        localStorage.getItem(scopedKey(key, scope)) || "{}",
+      );
       return value && typeof value === "object" && !Array.isArray(value)
         ? value
         : {};
@@ -11,9 +22,9 @@ window.ArenaRuntime = (() => {
       return {};
     }
   }
-  function save(key, value) {
+  function save(key, value, scope) {
     try {
-      localStorage.setItem(key, JSON.stringify(value));
+      localStorage.setItem(scopedKey(key, scope), JSON.stringify(value));
       return true;
     } catch {
       return false;
@@ -120,6 +131,7 @@ window.ArenaRuntime = (() => {
   };
   return {
     loadSave,
+    setSaveScope,
     save,
     number,
     choice,

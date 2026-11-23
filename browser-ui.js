@@ -256,6 +256,12 @@ window.ArenaUI = (() => {
       },
       renderPreview,
       refreshAvatar,
+      refreshSave() {
+        refreshAvatar();
+        keyEditor.refresh();
+        refreshHints();
+        $("qualitySel").value = $("qualityPause").value = state.quality;
+      },
     };
   }
   return { init, notice, fatal };

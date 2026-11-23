@@ -18,6 +18,8 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      GAMEWEB_API_URL: ${{ vars.GAMEWEB_API_URL }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -25,10 +27,15 @@ jobs:
           node-version: "24"
           cache: npm
       - run: npm ci
+      - run: npm ci --prefix backend
       - run: npm run check
       - run: npm run test:unit
+      - run: npm run test:api
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
+        env:
+          ARENA_BROWSER: chromium
+      - run: npm run test:accounts
         env:
           ARENA_BROWSER: chromium
       - run: python3 build-standalone.py
@@ -38,9 +45,28 @@ jobs:
         with:
           path: site
 
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      COMPOSE_PROJECT_NAME: gameweb-ci-${{ github.run_id }}
+      POSTGRES_ADMIN_PASSWORD: ci-only-administrator-password
+      POSTGRES_PASSWORD: ci-only-application-password
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - run: docker compose -f backend/compose.yml up --build --wait --wait-timeout 150 -d db api
+      - run: node backend/test/container-smoke.js
+      - if: failure()
+        run: docker compose -f backend/compose.yml logs --tail 100 api db
+      - if: always()
+        run: docker compose -f backend/compose.yml down --volumes
+
   deploy:
     if: github.event_name != 'pull_request'
-    needs: verify
+    needs: [verify, container]
     runs-on: ubuntu-latest
     permissions:
       pages: write

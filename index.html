@@ -22,7 +22,7 @@
           <div style="display: flex; flex-direction: column; gap: 8px">
             <div class="panel stats">
               <div class="stat">
-                <label>Nível local</label
+                <label>Nível casual</label
                 ><span id="uiRank" class="gold" style="font-size: 15px"
                   >Bronze</span
                 >
@@ -146,6 +146,9 @@
             ><span>BLOCK<br />ARENA<span class="brand-dot">.</span></span></a
           >
           <div class="lobby-header-right">
+            <button id="btnAccount" class="account-button" type="button">
+              Entrar
+            </button>
             <span class="local-chip"><i></i> EDIÇÃO NAVEGADOR</span
             ><button
               id="btnFullscreenLobby"
@@ -177,7 +180,8 @@
             <div class="profile-strip">
               <span class="profile-icon">★</span>
               <div>
-                <span class="eyebrow">PROGRESSO NESTE NAVEGADOR</span
+                <span class="eyebrow" id="progressScope"
+                  >PROGRESSO NESTE NAVEGADOR</span
                 ><b id="svRank">Bronze</b>
               </div>
               <button
@@ -193,7 +197,7 @@
               <div><b id="svCapas">0</b><span>NA CABEÇA</span></div>
               <div><b id="svBooyahs">0</b><span>VITÓRIAS</span></div>
             </div>
-            <p class="local-note">
+            <p class="local-note" id="syncStatus">
               Jogue como visitante. O progresso fica salvo neste navegador.
             </p>
           </section>
@@ -414,6 +418,206 @@
       </section>
     </div>
     <div
+      id="accountModal"
+      class="modal-backdrop hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="accountTitle"
+    >
+      <section class="modal account-shell">
+        <div class="account-heading">
+          <span class="eyebrow">BLOCK ARENA</span
+          ><button
+            id="accountClose"
+            type="button"
+            class="icon-button"
+            aria-label="Fechar conta"
+          >
+            ×
+          </button>
+        </div>
+        <h1 id="accountTitle">Sua conta na arena</h1>
+        <p id="accountUnavailable" class="account-info" hidden>
+          As contas online ainda não estão disponíveis. Você pode continuar
+          jogando como visitante.
+        </p>
+        <p id="accountError" class="account-error" role="alert"></p>
+        <p id="accountMessage" class="account-success" role="status"></p>
+        <div id="accountAuth">
+          <div class="account-tabs" role="tablist" aria-label="Acesso à conta">
+            <button
+              id="accountLoginTab"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              aria-controls="accountLogin"
+            >
+              Entrar</button
+            ><button
+              id="accountRegisterTab"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="accountRegister"
+            >
+              Criar conta
+            </button>
+          </div>
+          <form id="accountLogin" class="account-form" role="tabpanel">
+            <label for="loginEmail">E-mail</label
+            ><input
+              id="loginEmail"
+              type="email"
+              autocomplete="username"
+              maxlength="254"
+              required
+            />
+            <label for="loginPassword">Senha</label
+            ><input
+              id="loginPassword"
+              type="password"
+              autocomplete="current-password"
+              minlength="12"
+              maxlength="128"
+              required
+            />
+            <label class="account-check"
+              ><input id="loginRemember" type="checkbox" /> Manter conectado por
+              até 7 dias neste dispositivo</label
+            >
+            <button type="submit" class="play-btn">Entrar na conta</button>
+          </form>
+          <form
+            id="accountRegister"
+            class="account-form"
+            role="tabpanel"
+            hidden
+          >
+            <label for="registerNickname">Apelido</label
+            ><input
+              id="registerNickname"
+              type="text"
+              autocomplete="nickname"
+              minlength="2"
+              maxlength="24"
+              required
+            />
+            <label for="registerEmail">E-mail</label
+            ><input
+              id="registerEmail"
+              type="email"
+              autocomplete="username"
+              maxlength="254"
+              required
+            />
+            <label for="registerPassword">Senha</label
+            ><input
+              id="registerPassword"
+              type="password"
+              autocomplete="new-password"
+              minlength="12"
+              maxlength="128"
+              aria-describedby="passwordHint"
+              required
+            /><small id="passwordHint"
+              >Use pelo menos 12 caracteres. Uma frase longa é uma boa
+              opção.</small
+            >
+            <label for="registerPasswordConfirm">Repita a senha</label
+            ><input
+              id="registerPasswordConfirm"
+              type="password"
+              autocomplete="new-password"
+              minlength="12"
+              maxlength="128"
+              required
+            />
+            <label class="account-check"
+              ><input id="registerRemember" type="checkbox" /> Manter conectado
+              neste dispositivo</label
+            >
+            <button type="submit" class="play-btn">Criar minha conta</button>
+          </form>
+          <p class="account-footnote">
+            As contas salvam progresso casual. Partidas competitivas ainda não
+            estão disponíveis.
+          </p>
+        </div>
+        <div id="accountProfile" hidden>
+          <div class="account-summary">
+            <p id="profileEmail"></p>
+            <small>Na arena desde <span id="profileCreatedAt"></span></small>
+          </div>
+          <p id="accountSyncStatus" class="account-info" role="status"></p>
+          <button id="accountRetry" type="button" class="secondary-btn" hidden>
+            Tentar sincronizar novamente
+          </button>
+          <div id="accountConflict" class="account-conflict" hidden>
+            <h2>Qual progresso deseja manter?</h2>
+            <p>As versões foram preservadas. Escolha uma para continuar.</p>
+            <p id="conflictOnline"></p>
+            <p id="conflictLocal"></p>
+            <div class="pause-actions">
+              <button id="useOnline" class="secondary-btn" type="button">
+                Usar progresso online</button
+              ><button id="useDevice" class="secondary-btn" type="button">
+                Usar deste dispositivo
+              </button>
+            </div>
+          </div>
+          <form id="accountProfileForm" class="account-form">
+            <label for="profileNickname">Seu apelido</label
+            ><input
+              id="profileNickname"
+              type="text"
+              autocomplete="nickname"
+              minlength="2"
+              maxlength="24"
+              required
+            /><button type="submit" class="secondary-btn">
+              Salvar apelido
+            </button>
+          </form>
+          <button
+            id="accountImport"
+            class="secondary-btn account-import"
+            type="button"
+            hidden
+          >
+            Importar o progresso de visitante deste navegador
+          </button>
+          <details class="account-password">
+            <summary>Alterar senha</summary>
+            <form id="accountPassword" class="account-form">
+              <label for="currentPassword">Senha atual</label
+              ><input
+                id="currentPassword"
+                type="password"
+                autocomplete="current-password"
+                minlength="12"
+                maxlength="128"
+                required
+              /><label for="newPassword">Nova senha</label
+              ><input
+                id="newPassword"
+                type="password"
+                autocomplete="new-password"
+                minlength="12"
+                maxlength="128"
+                required
+              /><button type="submit" class="secondary-btn">
+                Alterar senha
+              </button>
+            </form>
+          </details>
+          <button id="accountLogout" type="button" class="account-logout">
+            Sair da conta
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <div
       id="appNotice"
       role="status"
       aria-live="polite"
@@ -470,6 +674,10 @@
     <script src="vendor/three.min.js"></script>
     <script src="vendor/peerjs.min.js"></script>
     <script src="runtime.js"></script>
+    <script src="save-model.js"></script>
+    <script src="account-config.js"></script>
+    <script src="accounts.js"></script>
+    <script src="account-ui.js"></script>
     <script src="combat-state.js"></script>
     <script src="controls.js"></script>
     <script src="controls-ui.js"></script>

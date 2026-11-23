@@ -9,7 +9,8 @@
   const R = ArenaRuntime,
     clock = new R.SimulationClock(),
     disposeObject = R.disposeObject;
-  let ui = null;
+  let ui = null,
+    accounts = null;
   const $ = (id) => document.getElementById(id);
 
   // TEXTURAS & MIRAS PNG
@@ -241,12 +242,8 @@
       )
       .join("");
   }
-  function persistSave() {
-    statsTotal.bonusPts =
-      (statsTotal.capas >= 5 ? 150 : 0) +
-      (statsTotal.boomKills >= 1 ? 150 : 0) +
-      (statsTotal.booyahs >= 1 ? 300 : 0);
-    const stored = R.save(SAVE_KEY, {
+  function snapshotSave() {
+    return ArenaSave.normalize({
       sens: state.sens,
       redDotSens: state.redDotSens,
       sens2x: state.sens2x,
@@ -269,6 +266,15 @@
       quality: state.quality,
       keyBindings: bindings.snapshot(),
     });
+  }
+  function persistSave(options = {}) {
+    statsTotal.bonusPts =
+      (statsTotal.capas >= 5 ? 150 : 0) +
+      (statsTotal.boomKills >= 1 ? 150 : 0) +
+      (statsTotal.booyahs >= 1 ? 300 : 0);
+    const snapshot = snapshotSave();
+    const stored = R.save(SAVE_KEY, snapshot);
+    if (!options.skipCloud) accounts?.queueSave(snapshot);
     if (!stored && !persistSave.warned) {
       persistSave.warned = true;
       ArenaUI.notice(
@@ -1660,6 +1666,7 @@
     ["assistStrength", "Assistência", 0, 1.5],
   ].forEach(([p, l, mn, mx]) => {
     const r = document.createElement("div");
+    r.dataset.setting = p;
     r.className = "set-row";
     const v = () =>
       p === "assistStrength"
@@ -5007,6 +5014,79 @@
     leaveGame,
   });
   ui.lobby();
+  function applyAccountSave(raw) {
+    const data = ArenaSave.normalize(raw);
+    for (const key of [
+      "sens",
+      "redDotSens",
+      "sens2x",
+      "sens4x",
+      "assistStrength",
+      "aimMode",
+      "shirtColor",
+      "evoSkin",
+      "skill",
+      "pet",
+      "timeOfDay",
+      "skinTone",
+      "hatStyle",
+      "hatColor",
+      "quality",
+    ])
+      state[key] = data[key];
+    statsTotal.kills = data.totalKills;
+    statsTotal.capas = data.totalCapas;
+    statsTotal.booyahs = data.totalBooyahs;
+    statsTotal.boomKills = data.boomKills;
+    statsTotal.bonusPts = data.bonusPts;
+    bindings.replace(data.keyBindings);
+    releaseInputs();
+    lastHudAt = 0;
+    for (const [id, key] of [
+      ["aimMode", "aimMode"],
+      ["skinColorSel", "shirtColor"],
+      ["evoSkinSel", "evoSkin"],
+      ["skillSel", "skill"],
+      ["petSel", "pet"],
+      ["timeSel", "timeOfDay"],
+      ["skinToneSel", "skinTone"],
+      ["hatStyleSel", "hatStyle"],
+      ["hatColorSel", "hatColor"],
+    ])
+      $(id).value = data[key];
+    for (const row of document.querySelectorAll("[data-setting]")) {
+      const key = row.dataset.setting;
+      row.querySelector("input").value = data[key];
+      row.querySelector("b").textContent =
+        key === "assistStrength"
+          ? Math.round(data[key] * 100) + "%"
+          : data[key].toFixed(1);
+    }
+    for (const slot of weaponSlots)
+      slot.querySelector("b").textContent =
+        `${keyHint(slot.dataset.action)} • ${WEAPONS[slot.dataset.w].short}`;
+    applyTimeOfDay(state.timeOfDay);
+    updatePetVisual(state.pet);
+    applyQuality(state.quality);
+    disposeObject(playerChar.currentGun);
+    playerChar.currentGun = buildWeaponModel(state.weaponKey, state.evoSkin);
+    playerChar.gunHolder.add(playerChar.currentGun);
+    ui.refreshSave();
+    persistSave({ skipCloud: true });
+  }
+  accounts = ArenaAccounts.create({
+    apiBaseUrl: ArenaAccountConfig.apiBaseUrl,
+    adapter: {
+      snapshot: snapshotSave,
+      apply: applyAccountSave,
+      canApply: () => !state.started,
+      bootBusy: (value) => {
+        $("playBtn").disabled = value;
+      },
+    },
+  });
+  ArenaAccountUI.init(accounts);
+  accounts.start();
   function animate(realNow) {
     requestAnimationFrame(animate);
     if (!isSimulating()) {
