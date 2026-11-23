@@ -58,7 +58,7 @@ function passed(name, data) {
   base = "http://127.0.0.1:" + server.address().port + "/";
   const browser = await chromium.launch({
     ...(process.env.ARENA_BROWSER === "chromium"
-      ? {}
+      ? { channel: "chromium" }
       : { channel: process.env.ARENA_BROWSER || "chrome" }),
     headless: true,
     args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"],
@@ -541,6 +541,8 @@ function passed(name, data) {
     assert(memory.end.geometries <= memory.start.geometries + 1);
     assert(memory.pool <= 48);
     passed("Memória gráfica estável em 20 ciclos de efeitos e limpeza", memory);
+    // Isolate layout checks from the preceding GPU allocation stress test.
+    await fresh();
     for (const viewport of [
       { width: 390, height: 844 },
       { width: 768, height: 1024 },
@@ -557,13 +559,17 @@ function passed(name, data) {
         await page.locator("#overlay").evaluate((el) => (el.scrollTop = 0));
         await page.screenshot({
           path: path.join(artifacts, "mobile-lobby.png"),
+          timeout: 30000,
         });
       }
     }
     passed("Lobby sem rolagem horizontal em 390, 768 e 1366 pixels");
     await fresh();
     await page.setViewportSize({ width: 1440, height: 1000 });
-    await page.screenshot({ path: path.join(artifacts, "lobby-preview.png") });
+    await page.screenshot({
+      path: path.join(artifacts, "lobby-preview.png"),
+      timeout: 30000,
+    });
     assert.deepEqual(errors, []);
     passed("Sem exceções JavaScript durante os testes");
     fs.writeFileSync(
@@ -576,7 +582,12 @@ function passed(name, data) {
     );
   } catch (error) {
     if (page) {
-      await page.screenshot({ path: path.join(artifacts, "failure.png") });
+      await page
+        .screenshot({
+          path: path.join(artifacts, "failure.png"),
+          timeout: 5000,
+        })
+        .catch(() => {});
       console.log(
         "browser failure detail",
         await page.evaluate(() => ({
