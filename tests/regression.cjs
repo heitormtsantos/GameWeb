@@ -13,6 +13,12 @@ const types = {
   ".txt": "text/plain",
 };
 const server = http.createServer((request, response) => {
+  // This suite covers guest fallback; accounts-browser exercises a configured API.
+  if (request.url === "/account-config.js") {
+    response.writeHead(200, { "Content-Type": "text/javascript" });
+    response.end('window.ArenaAccountConfig=Object.freeze({apiBaseUrl:""});');
+    return;
+  }
   const file = path.resolve(
     root,
     "." + decodeURIComponent(new URL(request.url, "http://localhost").pathname),

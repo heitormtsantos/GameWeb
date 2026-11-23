@@ -63,7 +63,9 @@ PASSOU: Pacote público não inclui backend, testes, node_modules ou arquivos .e
 
 Os testes de API usam PGlite com as migrações e consultas reais de PostgreSQL.
 O workflow também verifica Docker com PostgreSQL 17 antes de liberar o deploy.
-A API não foi implantada numa VPS nesta entrega; isso será feito pelo usuário.
+A API foi implantada na VPS com HTTPS e uma instância PostgreSQL própria.
+Serviços, PIDs, respostas HTTP e arquivos Nginx dos outros projetos foram
+comparados ao estado anterior e permaneceram iguais.
 Sem GAMEWEB_API_URL, o site mantém o modo visitante, sem chamadas de login.
 Estatísticas são casuais; não há servidor competitivo ou antitrapaça.
 

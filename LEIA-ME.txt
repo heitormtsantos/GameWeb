@@ -59,11 +59,11 @@ Conexão real entre duas redes diferentes não foi validada nesta entrega.
 
 CONTAS E RANQUEADAS
 Cadastro, login, perfil e progresso online estão implementados com uma API
-Node.js e PostgreSQL. A API será hospedada separadamente na sua VPS.
-Consulte backend/README.md para Docker, HTTPS, banco e backups.
-Depois de subir a API, configure GAMEWEB_API_URL nas variáveis do GitHub e
-execute o workflow para ativar as contas. Até lá, o modo visitante funciona
-normalmente e o site informa que as contas estão indisponíveis.
+Node.js e PostgreSQL. A API está hospedada separadamente na VPS em:
+https://gameweb.76.13.114.33.sslip.io
+Consulte backend/deploy/README.md para a operação da VPS, ou backend/README.md
+para a alternativa Docker. GAMEWEB_API_URL permite trocar o endereço no build.
+O modo visitante continua disponível sem precisar criar uma conta.
 O progresso de visitante fica separado das contas. Importar é uma ação explícita
 para contas vazias. Saves offline aguardam envio; conflitos exigem escolher a versão.
 O perfil permite mudar apelido e senha. Não há recuperação automática por e-mail.

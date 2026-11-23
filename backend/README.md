@@ -2,6 +2,8 @@
 
 API Node.js 24 + Fastify + PostgreSQL. O frontend continua no [GitHub Pages](https://heitormtsantos.github.io/GameWeb/). A API deve ser hospedada na sua VPS e ter um domínio HTTPS próprio.
 
+A instalação atual já está ativa em **https://gameweb.76.13.114.33.sslip.io**, usando Node e PostgreSQL próprios com systemd. Consulte a [operação dessa VPS](deploy/README.md). As instruções Docker abaixo são uma alternativa para novas instalações.
+
 ## Subir na VPS com Docker
 
 Pré-requisitos: Linux, Docker Engine com Compose, domínio apontando para o IP da VPS. Recomenda-se pelo menos 2 GB de RAM para API, banco e sistema operacional.
@@ -58,7 +60,7 @@ Depois que `/health` responder pelo domínio HTTPS da VPS:
 2. Crie a variável de repositório **`GAMEWEB_API_URL`**, por exemplo `https://api.seudominio.com`, sem caminho ou barra final.
 3. Em **Actions → Verify and publish game**, execute **Run workflow** na branch `main`.
 
-Essa variável é pública: contém somente a origem da API, sem senha, token ou credencial. O build injeta o mesmo endereço no site e no HTML único. Nunca coloque `DATABASE_URL`, senha do banco ou token de conta nessa variável.
+Essa variável é pública: contém somente a origem da API, sem senha, token ou credencial. O build injeta o mesmo endereço no site e no HTML único. O endereço da VPS atual também é o padrão do código; definir a variável como vazia desativa contas. Nunca coloque `DATABASE_URL`, senha do banco ou token de conta nessa variável.
 
 Enquanto `GAMEWEB_API_URL` estiver vazia, o site informa que as contas não estão disponíveis e mantém o jogo como visitante. Nenhuma chamada de login é enviada.
 

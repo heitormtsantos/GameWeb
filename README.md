@@ -126,9 +126,9 @@ O workflow `.github/workflows/pages.yml` verifica sintaxe, testes unitários, AP
 
 O sistema inclui cadastro por e-mail e senha, login, perfil com apelido, alteração de senha e progresso salvo por conta. Aparência, configurações, teclas e estatísticas casuais acompanham o jogador entre dispositivos. Cada conta tem seu próprio cache; o save de visitante fica separado e pode ser importado explicitamente para uma conta vazia. Alterações offline aguardam sincronização, e conflitos permitem escolher a versão online ou a do dispositivo.
 
-A API está pronta para hospedar na sua VPS com Docker e PostgreSQL. **Enquanto a VPS não estiver configurada, o site mantém o modo visitante e informa que as contas estão indisponíveis.** O GitHub Pages hospeda somente o frontend.
+A API está hospedada na VPS em **`https://gameweb.76.13.114.33.sslip.io`**, com HTTPS, serviços próprios e uma instância PostgreSQL separada dos outros projetos. O GitHub Pages hospeda somente o frontend. Consulte a [operação da VPS](backend/deploy/README.md).
 
-Siga o [guia do backend](backend/README.md) para subir a API com HTTPS. Depois, defina a variável de repositório `GAMEWEB_API_URL` com a origem pública da API e execute o workflow para ativar as contas no site. Essa variável não deve conter credenciais.
+O [guia do backend](backend/README.md) também inclui a alternativa Docker. A variável de repositório `GAMEWEB_API_URL` permite trocar a origem da API nos builds; ela não deve conter credenciais. Se for definida como vazia, o site mantém somente o modo visitante.
 
 Ainda não há ranqueada competitiva, verificação de e-mail ou recuperação automática de senha. O perfil permite alterar a senha; o guia inclui recuperação administrativa. As patentes e o X1 P2P são casuais; resultados competitivos exigirão validação por servidor.
 

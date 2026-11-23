@@ -1,2 +1,4 @@
-/* Public endpoint only. The VPS API is activated with GAMEWEB_API_URL at build time. */
-window.ArenaAccountConfig = Object.freeze({ apiBaseUrl: "" });
+/* Public endpoint only. GAMEWEB_API_URL can override it in generated builds. */
+window.ArenaAccountConfig = Object.freeze({
+  apiBaseUrl: "https://gameweb.76.13.114.33.sslip.io",
+});

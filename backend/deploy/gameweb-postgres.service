@@ -1,0 +1,29 @@
+[Unit]
+Description=GameWeb isolated PostgreSQL instance
+After=network.target
+
+[Service]
+Type=simple
+User=gameweb-db
+Group=gameweb-db
+RuntimeDirectory=gameweb-postgres
+RuntimeDirectoryMode=0700
+ExecStart=/usr/lib/postgresql/16/bin/postgres -D /var/lib/gameweb-postgres
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGINT
+KillMode=mixed
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=60
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/gameweb-postgres /run/gameweb-postgres
+MemoryMax=384M
+TasksMax=128
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

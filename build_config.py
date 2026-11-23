@@ -5,7 +5,7 @@ from urllib.parse import urlsplit
 
 
 def account_config():
-    value = os.environ.get('GAMEWEB_API_URL', '').strip().rstrip('/')
+    value = os.environ.get('GAMEWEB_API_URL', 'https://gameweb.76.13.114.33.sslip.io').strip().rstrip('/')
     if value:
         url = urlsplit(value)
         if (url.username or url.password or url.query or url.fragment or url.path

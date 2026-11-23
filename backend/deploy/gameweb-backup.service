@@ -1,0 +1,16 @@
+[Unit]
+Description=Back up the isolated GameWeb database
+Requires=gameweb-postgres.service
+After=gameweb-postgres.service
+
+[Service]
+Type=oneshot
+User=gameweb-db
+Group=gameweb-db
+ExecStart=/usr/bin/python3 /opt/gameweb/backup.py
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/backups/gameweb
+UMask=0077
